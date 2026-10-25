@@ -1,0 +1,5 @@
+old_url,new_url,content_type,title,published,updated,category,tags,has_cover,has_alias,encrypted,redirect_required,status,source_file,notes
+/guestbook/,/guestbook/,post,留言板,2026-10-05,,日常,留言板,no,no,no,no,migrated,content/posts/guestbook.md,"规范地址保留；同时生成 /posts/guestbook/ 的 noindex 兼容副本，canonical 指向 /guestbook/；副本不渲染 Giscus，避免评论分裂"
+/posts/xiangtuzhongguo-analysis/,/posts/xiangtuzhongguo-analysis/,post,一些关于《乡土中国》的解析,2026-03-31,,个人,"个人,正文",no,no,yes,no,migrated-encrypted,content/posts/xiangtuzhongguo-analysis.md,"正文已迁移；密码由 POST_PASSWORD_XIANGTU 提供，密文为 AES-256-GCM envelope；正文不在 HTML/feed/sitemap/Pagefind"
+/posts/first-blog/,/posts/first-blog/,post,测试文章,2026-03-28,,日常,测试,no,no,no,no,draft-hold,content/posts/first-blog.md,"仍为 draft；生产构建不生成；无旧公开 URL 流量"
+/posts/cs2/,/posts/cs2/,post,私密文章测试,2026-03-31,,日常,测试,no,no,yes,no,draft-hold,content/posts/cs2.md,"仍为 draft；测试内容；若发布需新增 POST_PASSWORD_CS2；不要沿用旧弱密码"

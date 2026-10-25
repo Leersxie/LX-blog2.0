@@ -1,0 +1,60 @@
+[
+  {
+    "query": "留言",
+    "count": 3,
+    "items": [
+      {
+        "title": "留言板",
+        "url": "/guestbook/"
+      },
+      {
+        "title": "友链",
+        "url": "/friends/"
+      },
+      {
+        "title": "项目",
+        "url": "/projects/"
+      }
+    ]
+  },
+  {
+    "query": "乡土",
+    "count": 1,
+    "items": [
+      {
+        "title": "一些关于《乡土中国》的解析",
+        "url": "/posts/xiangtuzhongguo-analysis/"
+      }
+    ]
+  },
+  {
+    "query": "Koishi",
+    "count": 1,
+    "items": [
+      {
+        "title": "项目",
+        "url": "/projects/"
+      }
+    ]
+  },
+  {
+    "query": "化学",
+    "count": 1,
+    "items": [
+      {
+        "title": "关于",
+        "url": "/about/"
+      }
+    ]
+  },
+  {
+    "query": "费孝通",
+    "count": 0,
+    "items": []
+  },
+  {
+    "query": "完全不存在的词",
+    "count": 0,
+    "items": []
+  }
+]

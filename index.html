@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="dark light" />
+		<title>Leersxie</title>
+		<script>
+			(function () {
+				try {
+					var stored = localStorage.getItem("noctilux-theme");
+					if (stored === "light" || stored === "dark") {
+						document.documentElement.dataset.theme = stored;
+					}
+				} catch (error) {
+					/* localStorage can be unavailable */
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script type="module" src="/src/main.tsx"></script>
+	</body>
+</html>
