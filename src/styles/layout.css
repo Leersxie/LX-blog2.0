@@ -96,8 +96,8 @@
 
 .nav-link__index {
 	font-family: var(--font-mono);
-	font-size: 8px;
-	color: var(--faint);
+	font-size: 9px;
+	color: var(--muted);
 }
 
 .nav-link::after {
