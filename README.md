@@ -41,9 +41,10 @@ pnpm test         # Vitest
 pnpm lint
 pnpm links        # 构建后检查内部链接、资源、加密明文泄漏
 pnpm test:e2e     # 需要本地 Edge；对构建产物做浏览器验收
+pnpm search:check # 中文检索质量 + 加密正文泄漏检查
 ```
 
-`pnpm test:e2e` 依赖本地已安装的 Microsoft Edge（或设置 `EDGE_PATH`），不是 CI gate；CI 使用 `check / test / lint / build / links`。
+浏览器验收和搜索审计都需要先 `pnpm build`，并在另一个终端运行 `pnpm preview`（默认 `http://127.0.0.1:4321`）。`pnpm test:e2e` 依赖本地 Microsoft Edge（或设置 `EDGE_PATH`），不是 CI gate；CI 使用 `check / test / lint / build / links`。
 
 ## 目录
 
