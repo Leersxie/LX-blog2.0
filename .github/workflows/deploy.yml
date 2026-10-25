@@ -93,12 +93,18 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$PAGE_URL"
-          curl -fsS "$PAGE_URL" | grep -q "夜航档案"
-          curl -fsS "${PAGE_URL}guestbook/" | grep -q "留言板"
-          curl -fsS "${PAGE_URL}posts/xiangtuzhongguo-analysis/" | grep -qi "noindex\|加密\|password"
-          curl -fsS "${PAGE_URL}rss.xml" | grep -q "<rss"
-          curl -fsS "${PAGE_URL}sitemap.xml" | grep -q "<urlset"
-          curl -fsS "${PAGE_URL}pagefind/pagefind.js" | grep -q "pagefind"
+          curl -fsS "$PAGE_URL" > /tmp/home.html
+          grep -q "夜航档案" /tmp/home.html
+          curl -fsS "${PAGE_URL}guestbook/" > /tmp/guestbook.html
+          grep -q "留言板" /tmp/guestbook.html
+          curl -fsS "${PAGE_URL}posts/xiangtuzhongguo-analysis/" > /tmp/encrypted.html
+          grep -qiE "noindex|加密|password" /tmp/encrypted.html
+          curl -fsS "${PAGE_URL}rss.xml" > /tmp/rss.xml
+          grep -q "<rss" /tmp/rss.xml
+          curl -fsS "${PAGE_URL}sitemap.xml" > /tmp/sitemap.xml
+          grep -q "<urlset" /tmp/sitemap.xml
+          curl -fsS "${PAGE_URL}pagefind/pagefind.js" > /tmp/pagefind.js
+          grep -q "pagefind" /tmp/pagefind.js
           code=$(curl -s -o /dev/null -w "%{http_code}" "${PAGE_URL}definitely-missing/")
           test "$code" = "404"
           echo "smoke ok: $PAGE_URL"
