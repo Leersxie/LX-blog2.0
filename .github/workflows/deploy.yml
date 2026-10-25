@@ -58,7 +58,7 @@ jobs:
       - run: pnpm build
       - run: pnpm links
       # PR builds use a throwaway passphrase and are never deployed.
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         if: github.event_name != 'pull_request'
         with:
           path: ./dist
