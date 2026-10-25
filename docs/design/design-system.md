@@ -14,7 +14,7 @@
 
 ## 2. Token
 
-实现位置：[src/styles/tokens.css](../src/styles/tokens.css)。深色为默认，浅色为可选。
+实现位置：[src/styles/tokens.css](../../src/styles/tokens.css)。深色为默认，浅色为可选。
 
 ### 2.1 颜色
 
