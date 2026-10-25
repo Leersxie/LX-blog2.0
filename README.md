@@ -5,7 +5,7 @@ Leersxie 的新个人站。一个 **React + TypeScript + Vite** 的静态生成�
 旧博客保留在 `../legacy/`，这个仓库不修改它。新站沿用旧站的有效内容、规范 URL 和功能语义，但视觉、组件、布局和工程组织全部重做。
 
 > 当前状态：Phase 0–6 已完成，生产构建位于 GitHub Pages 项目路径 `/LX-blog2.0/`。
-> 生产地址：<https://leersxie.github.io/LX-blog2.0/>。Lighthouse 移动端：首页 99 / 文章 92 / 归档 91；axe 9 次扫描 0 违规。
+> 生产地址：<https://leersxie.github.io/LX-blog2.0/>。本地 Lighthouse 移动端：首页 99 / 文章 92 / 归档 91；axe 9 次扫描 0 违规。CI 共享 runner 结果另见 [docs/lighthouse-ci-report.md](docs/lighthouse-ci-report.md)。
 
 ## 已实现
 
@@ -89,13 +89,15 @@ docs/
 ## 文档
 
 - [技术 spike 报告](docs/spike-report.md)
+- [最终 Phase 0–6 报告](docs/rebuild/final-report.md)
 - [设计系统](docs/design/design-system.md)
 - [组件清单](docs/design/component-inventory.md)
 - [动效规范](docs/design/motion-spec.md)
 - [依赖登记](docs/dependencies.md)
-- [Phase 1–6 完成报告](docs/rebuild/final-report.md)
 - [Phase 1/2 历史阶段报告](docs/rebuild/phase-1-2-report.md)
+- [低保真线框](docs/design/wireframes.md)
 - [验收清单](docs/acceptance-checklist.md)
+- [本地 Lighthouse 报告](docs/lighthouse-report.md) / [CI Lighthouse 报告](docs/lighthouse-ci-report.md)
 - [内容迁移台账](docs/rebuild/content-migration.csv)
 - [路由台账](docs/rebuild/route-map.csv)
 

@@ -155,7 +155,7 @@ LX-blog2.0 是项目站，真实公开路径是 `https://leersxie.github.io/LX-b
 | Lighthouse `/guestbook/` | 92 / 100 / 100 / 100；LCP 1.3s，TBT 350ms，CLS 0.002 |
 | Lighthouse `/archive/` | 91 / 100 / 100 / 100；LCP 1.2s，TBT 390ms，CLS 0 |
 
-Lighthouse 为本地 Edge、移动端模拟、单次运行；不是真实网络，也不是 CI 实测。
+本地 Lighthouse 为 Edge、移动端模拟、单次运行；CI run 40174081094 的共享 runner 为 76/87/89（A11y/Best/SEO 仍 100），说明共享 CPU 会显著拉低 Performance。两者都不是真实手机网络。
 
 ### 3.8 浏览器验收
 
@@ -178,13 +178,14 @@ Lighthouse 为本地 Edge、移动端模拟、单次运行；不是真实网络�
 
 ## 4. 未验证 / 限制
 
-- **未实际部署到新的 GitHub 仓库**：没有远端 remote 和 Pages 环境。workflow 已按 GitHub Pages artifact 模式写好，但真实部署是 `not-run`。
-- **未在 GitHub Actions Ubuntu 环境跑过**：本地为 Windows + Node 24；CI 目标为 Node 22。锁文件固定，仍需首次 CI 验证。
-- **未跑 Lighthouse / CWV**：不能宣称性能 90+。
-- **未做真实手机 / 触摸 / 屏幕阅读器**。
-- **Giscus 只验证 iframe 加载**：没有真实 GitHub 登录发评论。
-- **GTM 只验证脚本注入**：没有验证容器内的标签。
+- **已部署**：<https://leersxie.github.io/LX-blog2.0/>，run 40174002331 的 quality/build/deploy/smoke 全绿。
+- **已在 GitHub Actions Ubuntu + Node 22 跑过**：28 单测、build、links、Lighthouse/axe workflow 均通过。
+- **Lighthouse 已跑**：本地 99/92/91；CI 共享 runner 76/87/89，波动明显，不能等同本地分。A11y/Best/SEO 两边全 100。
+- **未做真实手机 / 软键盘 / 屏幕阅读器 / 200% 缩放**。
+- **Giscus 只验证 iframe + legacy term**：没有真实 GitHub 登录发评论。
+- **GTM 只验证脚本注入**：没有验证容器内的标签，没有 consent UI。
 - **Meting**：最终 E2E 加载了 243 首曲目；音频实际播放、跳过、错误恢复没有长时间回归测试。
+- **旧根 URL 未接管**：项目页在 `/LX-blog2.0/`，旧站根 `/guestbook/` 仍属于旧站。
 - **所有公开配置为真实 ID**，但外部服务可用性不归本仓库控制。
 
 ## 5. 结论
@@ -199,6 +200,6 @@ React + TypeScript + Vite + **自建静态预渲染**在当前内容规模下满
 - GitHub Pages 静态目录；
 - 无 SPA-only 退化。
 
-没有出现“必须自建大量插件才能保证文章路由/元信息”的阻碍。当前唯一额外插件是 `@vitejs/plugin-react`；SSG 是 82 行的 prerender 脚本（内容读取与渲染另有模块），职责可控。
+没有出现“必须自建大量插件才能保证文章路由/元信息”的阻碍。当前唯一额外插件是 `@vitejs/plugin-react`；SSG 是 105 行的 prerender 脚本（内容读取与渲染另有模块），职责可控。
 
 因此不需要退回 Astro/Mizuki。后续若需要更高阶的流式 SSR、ISR 或边缘渲染，可以再评估 Next.js；对当前纯静态个人博客，Vite + prerender 的成本更低、可解释性更好。

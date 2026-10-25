@@ -76,7 +76,7 @@
 ## 5. 性能
 
 - [x] 静态 HTML 首屏内容，不依赖 JS。
-- [x] 主 JS 88.00KB gzip，CSS 12.83KB gzip，dist 1.4MB。
+- [x] 主 JS 89.83KB gzip，内联 CSS 13.60KB gzip，dist 约 2.1MB。
 - [x] 无 WebGL / 动画库 / 第三方 UI 套件。
 - [x] 字体只加载 Latin 子集；中文走系统字体。
 - [x] 外部 Giscus / GTM / Meting 延迟加载。
@@ -107,18 +107,18 @@
 - [x] `pnpm test:e2e` 全部通过（本机 Edge，项目 base）。
 - [x] `pnpm dev` 与 `pnpm preview` 已运行；base 构建 + base preview 已运行。
 - [x] GitHub Actions 配置存在。
-- [ ] CI 在 Ubuntu / Node 22 实际跑过（推送后验证）。
-- [ ] 新仓库真实 GitHub Pages 部署（推送后验证）。
-- [ ] Lighthouse CI gate。
+- [x] CI 在 Ubuntu / Node 22 实际跑过（run 40174002331）。
+- [x] 新仓库真实 GitHub Pages 部署 + smoke 通过（run 40174002331）。
+- [ ] Lighthouse CI 性能预算门槛（目前只记录，不阻塞）。
 - [ ] 生产回滚演练。
 - [ ] 真实内容更新后的再验证（当前只有 4 篇）。
 
 ## 8. 结论
 
-当前可以进入 **Phase 3/4 的逐页精修与内容补齐**，但不能宣称已达到最终发布标准。最优先的未完成项：
+Phase 0–6 已完成并部署到 <https://leersxie.github.io/LX-blog2.0/>。剩余是发布后维护与未实机验证项：
 
-1. GitHub Actions 首次真实运行 + Pages 部署 + smoke / 回滚验证；
-2. Giscus 真实发评论、Meting 真实音频播放；
-3. 真实手机、软键盘、屏幕阅读器、200% 缩放；
-4. 加密密码轮换和私有内容源策略；
-5. Lighthouse CI gate 与周更性能趋势。
+1. Giscus 真实发评论、Meting 真实音频播放；
+2. 真实手机、软键盘、屏幕阅读器、200% 缩放；
+3. 加密密码轮换和私有内容源策略；
+4. Lighthouse 性能预算门槛与周更趋势；
+5. 旧根 URL 的最终接管方案（用户站/自定义域名）。

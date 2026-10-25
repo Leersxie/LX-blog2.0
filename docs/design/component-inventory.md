@@ -45,7 +45,7 @@
 | 组件 | 路径 | 职责 | 状态 |
 |---|---|---|---|
 | `SearchDialog` | `components/search/SearchDialog.tsx` | Pagefind 动态加载、去抖、结果、↑↓ / Enter / Esc、焦点陷阱 | 首次 WASM 加载期间显示 loading；索引缺失显示可操作错误 |
-| `Pagefind index` | 构建后 `dist/pagefind/` | 5 页 / 520 词 | 中文无 stemming |
+| `Pagefind index` | 构建后 `dist/pagefind/` | 5 页 / 523 词 | 中文无 stemming |
 
 键盘：
 

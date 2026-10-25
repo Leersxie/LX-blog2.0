@@ -51,7 +51,7 @@
 - 主 CSS：**59.40KB raw / 13.60KB gzip**，构建后内联进每个 HTML；独立 CSS 文件在 prerender 后移除。
 - 字体：Latin 子集按需约 **62.7KB**（Space Grotesk 22.28KB + JetBrains Mono 40.40KB），其余 unicode-range 文件不会在中文页面请求。
 - 首页 HTML：**83.96KB raw / 19.84KB gzip**（含内联 CSS）。
-- `dist/`：约 **2.2MB**（含 Pagefind 运行时、双 OG 图、项目图片、字体和 Lighthouse 原始报告）。
+- `dist/`：约 **2.1MB**（含 Pagefind 运行时、双 OG 图、项目图片、字体和 Lighthouse 原始报告）。
 - 构建输出：11 个 HTML、9 条 sitemap URL、5 页 Pagefind 索引（523 词）。
 
 ## 明确没有使用

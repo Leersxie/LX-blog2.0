@@ -40,8 +40,10 @@ SITE_BASE=/LX-blog2.0/ pnpm preview
 - [x] 配置 secret `POST_PASSWORD_XIANGTU`。
 - [x] 工作流设置 `SITE_BASE=/LX-blog2.0/`。
 - [x] 构建、link check、Pagefind 索引。
-- [ ] 首次真实 Actions 运行（提交并推送后由本阶段完成）。
-- [ ] 部署后 smoke 的真实结果（由 workflow 的 `smoke` job 记录）。
+- [x] 首次真实 Actions 运行：[run 40174002331](https://github.com/Leersxie/LX-blog2.0/actions/runs/40174002331)。
+- [x] 部署后 smoke 通过：首页、guestbook、加密页、RSS、sitemap、Pagefind、404。
+- [x] 线上加密解锁、Giscus iframe / legacy term 已手工验证。
+- [x] Lighthouse/axe CI 工作流：[run 40174081094](https://github.com/Leersxie/LX-blog2.0/actions/runs/40174081094)。
 
 如在新环境重建：
 
