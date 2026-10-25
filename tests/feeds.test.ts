@@ -16,7 +16,7 @@ describe("feeds and sitemap", () => {
 
 	it("sitemap uses absolute URLs and lastmod for posts", () => {
 		const xml = buildSitemap();
-		expect(xml).toContain("<loc>https://leersxie.github.io/guestbook/</loc>");
+		expect(xml).toContain("<loc>https://leersxie.github.io/LX-blog2.0/guestbook/</loc>");
 		expect(xml).toContain("<lastmod>2026-10-05</lastmod>");
 		expect(xml).not.toContain("/posts/guestbook/");
 	});
@@ -32,14 +32,14 @@ describe("feeds and sitemap", () => {
 	it("Atom is XML and contains a self link", () => {
 		const atom = buildAtom();
 		expect(atom).toContain('<feed xmlns="http://www.w3.org/2005/Atom">');
-		expect(atom).toContain("https://leersxie.github.io/atom.xml");
+		expect(atom).toContain("https://leersxie.github.io/LX-blog2.0/atom.xml");
 		expect(atom).toContain("留言板");
 		expect(atom).not.toContain("差序格局");
 	});
 
 	it("robots points at the sitemap and keeps build assets out", () => {
 		const robots = buildRobots();
-		expect(robots).toContain("Sitemap: https://leersxie.github.io/sitemap.xml");
-		expect(robots).toContain("Disallow: /pagefind/");
+		expect(robots).toContain("Sitemap: https://leersxie.github.io/LX-blog2.0/sitemap.xml");
+		expect(robots).toContain("Disallow: /LX-blog2.0/pagefind/");
 	});
 });

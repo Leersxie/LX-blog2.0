@@ -4,7 +4,8 @@ Leersxie 的新个人站。一个 **React + TypeScript + Vite** 的静态生成�
 
 旧博客保留在 `../legacy/`，这个仓库不修改它。新站沿用旧站的有效内容、规范 URL 和功能语义，但视觉、组件、布局和工程组织全部重做。
 
-> 当前状态：Phase 0/1/2 的静态生成底座和核心页面已落地；尚未做 Lighthouse、真实手机与完整发布验收。
+> 当前状态：Phase 0–6 已完成，生产构建位于 GitHub Pages 项目路径 `/LX-blog2.0/`。
+> 生产地址：<https://leersxie.github.io/LX-blog2.0/>。Lighthouse 移动端：首页 99 / 文章 92 / 归档 91；axe 9 次扫描 0 违规。
 
 ## 已实现
 
@@ -13,12 +14,14 @@ Leersxie 的新个人站。一个 **React + TypeScript + Vite** 的静态生成�
 - 旧 URL：`/posts/<slug>/`、`/guestbook/`、`/posts/guestbook/` 兼容副本。
 - 加密文章：AES-256-GCM envelope + 浏览器 Web Crypto 解锁；正文不进入 HTML 或 Pagefind 索引。
 - Pagefind 搜索：构建后索引，支持 ↑ / ↓、Enter、Esc、焦点陷阱与焦点返回。
-- Giscus 评论（按 pathname 映射，懒加载）。
+- Giscus 评论（保留旧 discussion term，懒加载）。
 - GTM（首次交互后加载，不阻塞首屏）。
 - Meting 歌单（打开面板时请求，不自动播放；失败有重试和网易云直达链接）。
 - RSS、Atom、sitemap、sitemap-index、sitemap-0、robots、API 兼容 JSON。
-- 深色 / 浅色主题、`prefers-reduced-motion`、键盘可达、无 JS 可读。
-- GitHub Actions：typecheck、24 个单测、lint、构建、链接检查、GitHub Pages 部署。
+- 深色 / 浅色主题、站点级减少动效、系统 `prefers-reduced-motion`、键盘可达、无 JS 可读。
+- 代码块复制、文章/项目图片灯箱（Esc、方向键、焦点返回）、响应式表格滚动。
+- 构建期 CSS 内联；每篇文章独立 OG 图；旧 sitemap/API 兼容输出。
+- GitHub Actions：typecheck、28 个单测、lint、构建、链接检查、GitHub Pages 部署与 post-deploy smoke。
 
 ## 快速开始
 
@@ -29,8 +32,8 @@ pnpm install
 cp .env.example .env.local
 # 填入 POST_PASSWORD_XIANGTU。缺失时构建会明确失败，避免把加密正文误发布。
 pnpm dev          # http://127.0.0.1:4321
-pnpm build        # dist/ + Pagefind 索引
-pnpm preview      # 静态预览，含真实 404
+$env:SITE_BASE="/LX-blog2.0/"; pnpm build   # 生产构建；本地 root 构建可省略 SITE_BASE
+$env:SITE_BASE="/LX-blog2.0/"; pnpm preview # http://127.0.0.1:4321/LX-blog2.0/
 ```
 
 常用检查：
@@ -42,9 +45,11 @@ pnpm lint
 pnpm links        # 构建后检查内部链接、资源、加密明文泄漏
 pnpm test:e2e     # 需要本地 Edge；对构建产物做浏览器验收
 pnpm search:check # 中文检索质量 + 加密正文泄漏检查
+pnpm audit:a11y   # axe WCAG A/AA（桌面 + 移动）
+pnpm audit:lighthouse # Lighthouse 移动端 3 页
 ```
 
-浏览器验收和搜索审计都需要先 `pnpm build`，并在另一个终端运行 `pnpm preview`（默认 `http://127.0.0.1:4321`）。`pnpm test:e2e` 依赖本地 Microsoft Edge（或设置 `EDGE_PATH`），不是 CI gate；CI 使用 `check / test / lint / build / links`。
+浏览器验收、搜索审计、axe 和 Lighthouse 都需要先构建并运行 `pnpm preview`。项目页构建使用 `SITE_BASE=/LX-blog2.0/`，对应的浏览器脚本使用 `BASE_URL=http://127.0.0.1:4321/LX-blog2.0`。`pnpm test:e2e` 依赖本地 Microsoft Edge（或设置 `EDGE_PATH`），不是 CI gate；CI 使用 `check / test / lint / build / links`，另有手动/每周 Lighthouse workflow。
 
 ## 目录
 
@@ -88,14 +93,21 @@ docs/
 - [组件清单](docs/design/component-inventory.md)
 - [动效规范](docs/design/motion-spec.md)
 - [依赖登记](docs/dependencies.md)
-- [Phase 1/2 报告](docs/rebuild/phase-1-2-report.md)
+- [Phase 1–6 完成报告](docs/rebuild/final-report.md)
+- [Phase 1/2 历史阶段报告](docs/rebuild/phase-1-2-report.md)
 - [验收清单](docs/acceptance-checklist.md)
 - [内容迁移台账](docs/rebuild/content-migration.csv)
 - [路由台账](docs/rebuild/route-map.csv)
 
 ## 部署
 
-推送 `main` 后由 [.github/workflows/deploy.yml](.github/workflows/deploy.yml) 构建并部署到 GitHub Pages。
+推送 `main` 后由 [.github/workflows/deploy.yml](.github/workflows/deploy.yml) 构建并部署到 GitHub Pages：
+
+- 仓库：<https://github.com/Leersxie/LX-blog2.0>
+- 站点：<https://leersxie.github.io/LX-blog2.0/>
+- 构建 base：`/LX-blog2.0/`（工作流已设置 `SITE_BASE`）
+
+**URL 注意**：项目页部署在 `/LX-blog2.0/` 下，旧站根路径 `/guestbook/` 等仍属于旧站。本站保留旧路径的规范结构（如 `/LX-blog2.0/guestbook/`）；若未来要接管根路径，需要把同一构建部署到用户站仓库或自定义域名。
 
 必须在仓库 Secrets 中配置：
 

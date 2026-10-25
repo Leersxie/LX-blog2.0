@@ -323,6 +323,69 @@
 	font-size: 0.84em;
 }
 
+.code-frame {
+	margin: 1.7em 0;
+	overflow: hidden;
+	border: 1px solid var(--line);
+	border-radius: var(--radius-inner);
+	background: var(--surface);
+}
+
+.code-frame__bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	min-height: 36px;
+	padding: 0 10px 0 14px;
+	border-bottom: 1px solid var(--line);
+	background: color-mix(in srgb, var(--surface) 86%, var(--bg));
+}
+
+.code-frame__lang {
+	color: var(--faint);
+	font-family: var(--font-mono);
+	font-size: 9px;
+	letter-spacing: 0.1em;
+}
+
+.code-copy {
+	display: none;
+	align-items: center;
+	min-height: 26px;
+	padding: 0 8px;
+	border: 1px solid var(--line);
+	border-radius: 3px;
+	background: transparent;
+	color: var(--muted);
+	font-family: var(--font-mono);
+	font-size: 9px;
+	letter-spacing: 0.06em;
+	transition:
+		color var(--dur) var(--ease),
+		border-color var(--dur) var(--ease);
+}
+
+.js .code-copy {
+	display: inline-flex;
+}
+
+.code-copy:hover,
+.code-copy:focus-visible {
+	border-color: var(--line-strong);
+	color: var(--ink);
+}
+
+.code-copy[data-state="copied"] {
+	border-color: var(--violet);
+	color: var(--violet);
+}
+
+.code-copy[data-state="error"] {
+	border-color: var(--orange);
+	color: var(--orange);
+}
+
 .noctilux-prose pre {
 	position: relative;
 	margin: 1.7em 0;
@@ -333,6 +396,14 @@
 	background: var(--surface);
 	font-size: 13px;
 	line-height: 1.7;
+}
+
+.code-frame pre {
+	margin: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	scrollbar-color: var(--line-strong) transparent;
 }
 
 .noctilux-prose pre code {
@@ -356,11 +427,50 @@
 	border-radius: var(--radius-inner);
 }
 
-.noctilux-prose table {
-	width: 100%;
+.noctilux-prose img.article-image {
+	cursor: zoom-in;
+}
+
+.noctilux-prose img.article-image:focus-visible {
+	outline: 2px solid var(--violet);
+	outline-offset: 4px;
+}
+
+.table-scroll {
+	max-width: 100%;
 	margin: 1.8em 0;
+	overflow-x: auto;
+	border: 1px solid var(--line);
+	border-radius: var(--radius-inner);
+	scrollbar-color: var(--line-strong) transparent;
+}
+
+.table-scroll:focus-visible {
+	outline: 2px solid var(--violet);
+	outline-offset: 3px;
+}
+
+.noctilux-prose .table-scroll table {
+	width: 100%;
+	min-width: 520px;
+	margin: 0;
+	border: 0;
 	border-collapse: collapse;
 	font-size: 13px;
+}
+
+.noctilux-prose .table-scroll th:first-child,
+.noctilux-prose .table-scroll td:first-child {
+	border-left: 0;
+}
+
+.noctilux-prose .table-scroll th:last-child,
+.noctilux-prose .table-scroll td:last-child {
+	border-right: 0;
+}
+
+.noctilux-prose .table-scroll tr:first-child th {
+	border-top: 0;
 }
 
 .noctilux-prose th,

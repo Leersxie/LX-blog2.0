@@ -1,6 +1,7 @@
 import { ArrowUpRight, GitBranch, ExternalLink } from "lucide-react";
 
 import { site } from "../config/site";
+import { withBase } from "../lib/url";
 import type { PageData, Project } from "../types";
 
 interface ProjectsPageProps {
@@ -14,8 +15,6 @@ const STATUS: Record<Project["status"], { label: string; className: string }> = 
 };
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
-	const primary = project.href ?? project.source;
-	const isExternal = primary?.startsWith("http");
 	return (
 		<article className="project-card">
 			<div className="project-card__head">
@@ -38,15 +37,15 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 					</div>
 				</div>
 				{project.image ? (
-					<a
-						href={project.href ?? project.source ?? "/projects/"}
+					<button
+						type="button"
 						className="project-card__media"
-						target={isExternal ? "_blank" : undefined}
-						rel={isExternal ? "noopener noreferrer" : undefined}
-						aria-label={`打开 ${project.title}`}
+						data-lightbox-src={withBase(project.image)}
+						data-lightbox-alt={`${project.title} 项目截图`}
+						aria-label={`放大查看 ${project.title} 截图`}
 					>
-						<img src={project.image} alt="" loading="lazy" />
-					</a>
+						<img src={withBase(project.image)} alt="" loading="lazy" />
+					</button>
 				) : (
 					<div className="project-card__glyph" aria-hidden="true">
 						<span>{String(index + 1).padStart(2, "0")}</span>
@@ -58,7 +57,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 				<div className="project-card__links">
 					{project.href && (
 						<a
-							href={project.href}
+							href={withBase(project.href)}
 							target={project.href.startsWith("http") ? "_blank" : undefined}
 							rel={project.href.startsWith("http") ? "noopener noreferrer" : undefined}
 						>
@@ -115,7 +114,7 @@ export function ProjectsPage({ data }: ProjectsPageProps) {
 					更多零散记录在 <a href={site.socials[0]?.href ?? "https://github.com/leersxie"}>GitHub</a>{" "}
 					和留言板。
 				</p>
-				<a className="text-link" href="/guestbook/">
+				<a className="text-link" href={withBase("/guestbook/")}>
 					去留言板 <ArrowUpRight aria-hidden="true" size={14} />
 				</a>
 			</div>

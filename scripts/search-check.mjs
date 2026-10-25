@@ -10,7 +10,8 @@ const browser = await chromium.launch({
 	args: ["--no-sandbox", "--disable-gpu"],
 });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-await page.goto("http://127.0.0.1:4321/", { waitUntil: "networkidle" });
+const base = (process.env.BASE_URL || "http://127.0.0.1:4321").replace(/\/$/, "");
+await page.goto(`${base}/`, { waitUntil: "networkidle" });
 await page.keyboard.press("/");
 await page.locator(".search-dialog").waitFor({ state: "visible" });
 const queries = ["留言", "乡土", "Koishi", "化学", "费孝通", "完全不存在的词"];

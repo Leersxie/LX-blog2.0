@@ -2,6 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 const DIST = path.join(process.cwd(), "dist");
+const rawBase = process.env.SITE_BASE || "/";
+const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
 const htmlFiles = [];
 function walk(dir) {
 	for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -32,9 +34,13 @@ function resolveInternal(value) {
 	const withoutQuery = withoutHash.split("?")[0] ?? "";
 	if (!withoutQuery) return null;
 	if (!withoutQuery.startsWith("/")) return null;
-	const decoded = decodeURIComponent(withoutQuery);
+	if (base !== "/" && !withoutQuery.startsWith(base)) {
+		return { target: "", url: withoutQuery };
+	}
+	const relative = base === "/" ? withoutQuery : `/${withoutQuery.slice(base.length)}`;
+	const decoded = decodeURIComponent(relative);
 	let target = path.join(DIST, decoded);
-	if (withoutQuery.endsWith("/")) target = path.join(target, "index.html");
+	if (relative.endsWith("/")) target = path.join(target, "index.html");
 	if (fs.existsSync(target) && fs.statSync(target).isDirectory()) {
 		target = path.join(target, "index.html");
 	}

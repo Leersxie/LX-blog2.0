@@ -7,6 +7,7 @@ import {
 } from "react";
 import { ArrowUpRight, Loader2, Search, X } from "lucide-react";
 
+import { withBase } from "../../lib/url";
 import type { PagefindResultData } from "../../types";
 
 interface PagefindModule {
@@ -22,7 +23,7 @@ interface SearchDialogProps {
 }
 
 function loadPagefind(): Promise<PagefindModule> {
-	const pagefindUrl = "/pagefind/pagefind.js";
+	const pagefindUrl = withBase("/pagefind/pagefind.js");
 	return import(/* @vite-ignore */ pagefindUrl).then(async (module) => {
 		const pagefind = module as unknown as PagefindModule;
 		await pagefind.init();
@@ -158,7 +159,7 @@ export function SearchDialog({ open, onClose }: SearchDialogProps) {
 			const target = results[active];
 			if (target) {
 				event.preventDefault();
-				window.location.assign(target.url);
+				window.location.assign(withBase(target.url));
 			}
 		}
 	};
@@ -242,10 +243,10 @@ export function SearchDialog({ open, onClose }: SearchDialogProps) {
 					)}
 					{results.map((result, index) => (
 						<a
-							key={result.url}
+							key={withBase(result.url)}
 							id={`search-result-${index}`}
 							className={`search-result${index === active ? " is-active" : ""}`}
-							href={result.url}
+							href={withBase(result.url)}
 							role="option"
 							aria-selected={index === active}
 							onMouseEnter={() => setActive(index)}
@@ -256,12 +257,19 @@ export function SearchDialog({ open, onClose }: SearchDialogProps) {
 							</span>
 							<span className="search-result__body">
 								<strong>{result.meta.title ?? result.url}</strong>
+								{(result.meta.category || result.meta.date) && (
+									<span className="search-result__meta mono-label">
+										{[result.meta.category, result.meta.date]
+											.filter(Boolean)
+											.join(" / ")}
+									</span>
+								)}
 								<span
 									className="search-result__excerpt"
 									dangerouslySetInnerHTML={{ __html: result.excerpt }}
 								/>
 								<span className="search-result__url mono-label">
-									{result.url}
+									{withBase(result.url)}
 								</span>
 							</span>
 							<ArrowUpRight aria-hidden="true" size={16} />

@@ -1,12 +1,9 @@
 import { site } from "../config/site";
+import { absoluteUrl } from "../lib/url";
 import type { PageData, SeoData } from "../types";
 
-function absolute(pathname: string): string {
-	return new URL(pathname, `${site.url}/`).href;
-}
-
 function defaultOgImage(): string {
-	return absolute("/og-default.png");
+	return absoluteUrl("/og-default.png");
 }
 
 export function getSeo(data: PageData): SeoData {
@@ -21,11 +18,12 @@ export function getSeo(data: PageData): SeoData {
 			: data.route === "/404.html"
 				? "/404.html"
 				: data.route;
-	const canonical = absolute(canonicalPath);
-	const ogImage = isPost && data.post?.cover
-		? /^https?:\/\//.test(data.post.cover)
-			? data.post.cover
-			: absolute(data.post.cover)
+	const canonical = absoluteUrl(canonicalPath);
+	const postImage = data.post?.cover ?? data.post?.ogImage;
+	const ogImage = isPost && postImage
+		? /^https?:\/\//.test(postImage)
+			? postImage
+			: absoluteUrl(postImage)
 		: defaultOgImage();
 
 	const jsonLd: Record<string, unknown>[] = [];
@@ -34,13 +32,13 @@ export function getSeo(data: PageData): SeoData {
 			"@context": "https://schema.org",
 			"@type": "WebSite",
 			name: site.title,
-			url: absolute("/"),
+			url: absoluteUrl("/"),
 			description: site.description,
 			inLanguage: site.lang,
 			author: {
 				"@type": "Person",
 				name: site.author.name,
-				url: absolute("/about/"),
+				url: absoluteUrl("/about/"),
 				sameAs: site.socials.map((social) => social.href),
 			},
 		});
@@ -49,7 +47,7 @@ export function getSeo(data: PageData): SeoData {
 			"@type": "Person",
 			name: site.author.name,
 			description: site.author.bio,
-			url: absolute("/about/"),
+			url: absoluteUrl("/about/"),
 			sameAs: site.socials.map((social) => social.href),
 		});
 	}
@@ -68,7 +66,7 @@ export function getSeo(data: PageData): SeoData {
 			author: {
 				"@type": "Person",
 				name: site.author.name,
-				url: absolute("/about/"),
+				url: absoluteUrl("/about/"),
 			},
 			publisher: {
 				"@type": "Person",
@@ -90,13 +88,13 @@ export function getSeo(data: PageData): SeoData {
 						"@type": "ListItem",
 						position: 1,
 						name: "首页",
-						item: absolute("/"),
+						item: absoluteUrl("/"),
 					},
 					{
 						"@type": "ListItem",
 						position: 2,
 						name: "归档",
-						item: absolute("/archive/"),
+						item: absoluteUrl("/archive/"),
 					},
 					{
 						"@type": "ListItem",

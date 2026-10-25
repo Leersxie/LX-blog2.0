@@ -3,6 +3,7 @@ import { ArrowUpRight, Menu, Moon, Search, Sun, X } from "lucide-react";
 
 import { site } from "../../config/site";
 import { cx, isActivePath } from "../../lib/format";
+import { withBase } from "../../lib/url";
 
 interface SiteHeaderProps {
 	current: string;
@@ -68,7 +69,7 @@ export function SiteHeader({ current, onSearch }: SiteHeaderProps) {
 	return (
 		<header className="site-header" id="top">
 			<div className="site-header__bar">
-				<a className="wordmark" href="/" aria-label="Leersxie 首页">
+				<a className="wordmark" href={withBase("/")}>
 					<span className="wordmark__mark" aria-hidden="true">
 						LX
 					</span>
@@ -86,7 +87,7 @@ export function SiteHeader({ current, onSearch }: SiteHeaderProps) {
 								"nav-link",
 								isActivePath(current, item.path) && "is-active",
 							)}
-							href={item.path}
+							href={withBase(item.path)}
 							aria-current={isActivePath(current, item.path) ? "page" : undefined}
 						>
 							<span className="nav-link__index">{item.index}</span>
@@ -133,7 +134,7 @@ export function SiteHeader({ current, onSearch }: SiteHeaderProps) {
 							{site.nav.map((item) => (
 								<a
 									key={item.path}
-									href={item.path}
+									href={withBase(item.path)}
 									className={cx(
 										"mobile-nav-link",
 										isActivePath(current, item.path) && "is-active",

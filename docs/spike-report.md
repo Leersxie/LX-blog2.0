@@ -45,7 +45,7 @@
 
 | 检查 | 结果 | 证据 |
 |---|---|---|
-| 独立 HTML | 通过 | 11 个 HTML：首页、归档、项目、关于、友链、RSS/Atom 说明页、2 篇规范文章、1 个兼容副本、404 |
+| 独立 HTML | 通过 | 11 个 HTML：首页、归档、项目、关于、友链、RSS/Atom 说明页、2 篇规范文章、1 个兼容副本、404；项目页 base 为 `/LX-blog2.0/` |
 | 文章 URL | 通过 | `/guestbook/`、`/posts/xiangtuzhongguo-analysis/` |
 | 兼容 URL | 通过 | `/posts/guestbook/`，`noindex` + canonical `/guestbook/` |
 | 深层 URL | 通过 | `pnpm preview` 下均为 200 |
@@ -68,7 +68,7 @@
 
 | 检查 | 结果 |
 |---|---|
-| sitemap 9 条 canonical URL | 通过 |
+| sitemap 9 条 canonical URL（均带 `/LX-blog2.0/` 前缀） | 通过 |
 | 兼容副本不在 sitemap | 通过 |
 | 404 noindex | 通过 |
 | 副本页 canonical 指向规范文章 | 通过 |
@@ -96,7 +96,7 @@
 
 ### 3.4 Pagefind 中文检索
 
-构建日志：**5 pages / 520 words / zh-cn**。索引页面为关于、友链、项目、留言板、加密文章元数据。
+构建日志：**5 pages / 523 words / zh-cn**。索引页面为关于、友链、项目、留言板、加密文章元数据。
 
 浏览器实测（`docs/search-baseline.json`）：
 
@@ -120,20 +120,44 @@
 
 | 指标 | 值 |
 |---|---:|
-| 主页 HTML | 23.5KB raw |
-| 主 JS | 285.79KB raw / 88.00KB gzip |
-| 主 CSS | 54.89KB raw / 12.83KB gzip |
+| 主页 HTML | 83.96KB raw / 19.84KB gzip（含内联 CSS） |
+| 主 JS | 292.22KB raw / 89.83KB gzip |
+| 主 CSS | 59.40KB raw / 13.60KB gzip（构建后内联，独立文件移除） |
 | 字体 | 仅 Latin 子集按需加载；woff2 约 62.7KB（Space Grotesk + JetBrains Mono） |
-| `dist/` | 1.4MB |
-| Pagefind 索引 | 520 words / 5 pages |
-| Vite build | 2.90s |
-| Pagefind | 0.814s |
+| `dist/` | 约 2.1MB |
+| Pagefind 索引 | 523 words / 5 pages |
+| Vite build | 0.8–2.9s（本机） |
+| Pagefind | 0.3s |
 
-对比旧站基线：HTML 275KB、JS 入口 95KB、CSS 299KB、`dist/` 36MB。新底座在体积上已明显减轻。
+对比旧站基线：HTML 275KB、JS 入口 95KB、CSS 299KB、`dist/` 36MB。新站主页 HTML 含内联 CSS 83.96KB / 19.84KB gzip，主 JS 89.83KB gzip；`dist/` 约 2.1MB。
 
 当前主 JS 为单入口，所有页面组件一次加载；后续可通过 `React.lazy` / 组件级拆分降低，但不是 P0。
 
-### 3.6 浏览器验收
+### 3.6 GitHub Pages 项目路径
+
+LX-blog2.0 是项目站，真实公开路径是 `https://leersxie.github.io/LX-blog2.0/`，不是根路径。构建通过 `SITE_BASE=/LX-blog2.0/` 注入：
+
+- Vite `base` + `__SITE_BASE__`；
+- `withBase()` 处理 JSX / Markdown / feed / sitemap / OG；
+- canonical / sitemap / RSS / robots 使用完整绝对 URL；
+- Pagefind 结果 URL 在客户端补 base；
+- preview server 支持前缀挂载；
+- link-check 在带 base 的产物上 0 缺失。
+
+本地 base 构建和 `BASE_URL=http://127.0.0.1:4321/LX-blog2.0` 的完整 E2E 已通过。
+
+### 3.7 质量审计
+
+| 审计 | 结果 |
+|---|---|
+| axe（7 页桌面 + 2 页移动） | 9 次扫描 / 0 violations |
+| Lighthouse 移动端 `/` | 99 / 100 / 100 / 100；LCP 1.6s，TBT 60ms，CLS 0 |
+| Lighthouse `/guestbook/` | 92 / 100 / 100 / 100；LCP 1.3s，TBT 350ms，CLS 0.002 |
+| Lighthouse `/archive/` | 91 / 100 / 100 / 100；LCP 1.2s，TBT 390ms，CLS 0 |
+
+Lighthouse 为本地 Edge、移动端模拟、单次运行；不是真实网络，也不是 CI 实测。
+
+### 3.8 浏览器验收
 
 `pnpm test:e2e` 全部通过：
 

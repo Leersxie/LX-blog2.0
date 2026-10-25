@@ -16,6 +16,7 @@ import { ReadingProgress } from "../components/article/ReadingProgress";
 import { site } from "../config/site";
 import { formatDate, formatDateZh, readingLabel } from "../lib/format";
 import { headingsFromHtml } from "../lib/headings";
+import { withBase } from "../lib/url";
 import type { PageData, PostSummary, TocHeading } from "../types";
 
 interface ArticlePageProps {
@@ -23,7 +24,7 @@ interface ArticlePageProps {
 }
 
 function postTagsHref(tag: string): string {
-	return `/archive/?tag=${encodeURIComponent(tag)}`;
+	return withBase(`/archive/?tag=${encodeURIComponent(tag)}`);
 }
 
 function relatedPosts(data: PageData): PostSummary[] {
@@ -69,9 +70,9 @@ export function ArticlePage({ data }: ArticlePageProps) {
 		<article className="page article-page">
 			<ReadingProgress />
 			<nav className="breadcrumbs" aria-label="面包屑">
-				<a href="/">首页</a>
+				<a href={withBase("/")}>首页</a>
 				<span aria-hidden="true">/</span>
-				<a href="/archive/">归档</a>
+				<a href={withBase("/archive/")}>归档</a>
 				<span aria-hidden="true">/</span>
 				<span aria-current="page">{post.title}</span>
 			</nav>
@@ -80,7 +81,7 @@ export function ArticlePage({ data }: ArticlePageProps) {
 				<div className="compat-notice" role="note">
 					<p>
 						这是旧链接的兼容副本。规范地址是{" "}
-						<a href={post.canonicalPath}>{post.canonicalPath}</a>。
+						<a href={withBase(post.canonicalPath)}>{withBase(post.canonicalPath)}</a>。
 					</p>
 					<span className="mono-label">NOINDEX / LEGACY PATH</span>
 				</div>
@@ -88,11 +89,14 @@ export function ArticlePage({ data }: ArticlePageProps) {
 
 			<header className="article-header">
 				<div className="article-header__meta">
-					<time dateTime={post.published}>
+					<time dateTime={post.published} data-pagefind-meta="date">
 						<CalendarDays aria-hidden="true" size={14} />
 						{formatDate(post.published)}
 					</time>
-					<a href={`/archive/?category=${encodeURIComponent(post.category)}`}>
+					<a
+						href={withBase(`/archive/?category=${encodeURIComponent(post.category)}`)}
+						data-pagefind-meta="category"
+					>
 						{post.category}
 					</a>
 					<span>
@@ -172,7 +176,7 @@ export function ArticlePage({ data }: ArticlePageProps) {
 						data-pagefind-ignore
 					>
 						{data.prevPost ? (
-							<a href={data.prevPost.url}>
+							<a href={withBase(data.prevPost.url)}>
 								<span className="mono-label">
 									<ArrowLeft aria-hidden="true" size={13} /> NEWER
 								</span>
@@ -182,7 +186,7 @@ export function ArticlePage({ data }: ArticlePageProps) {
 							<span />
 						)}
 						{data.nextPost ? (
-							<a href={data.nextPost.url} className="is-next">
+							<a href={withBase(data.nextPost.url)} className="is-next">
 								<span className="mono-label">
 									OLDER <ArrowRight aria-hidden="true" size={13} />
 								</span>
@@ -215,7 +219,7 @@ export function ArticlePage({ data }: ArticlePageProps) {
 					</div>
 					<div className="related-grid">
 						{related.map((item) => (
-							<a href={item.url} key={item.id}>
+							<a href={withBase(item.url)} key={item.id}>
 								<span className="mono-label">{formatDate(item.published)}</span>
 								<strong>{item.title}</strong>
 								<span>{item.description}</span>
@@ -226,7 +230,9 @@ export function ArticlePage({ data }: ArticlePageProps) {
 				</section>
 			)}
 
-			{post.comment ? <Comments /> : null}
+			{post.comment ? (
+				<Comments term={post.canonicalPath.replace(/^\//, "")} />
+			) : null}
 		</article>
 	);
 }

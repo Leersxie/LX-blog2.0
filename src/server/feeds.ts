@@ -1,4 +1,5 @@
 import { site } from "../config/site";
+import { absoluteUrl, withBase } from "../lib/url";
 import { getFeedPosts, getPageData, getRoutes } from "./content";
 
 function escapeXml(value: string): string {
@@ -8,10 +9,6 @@ function escapeXml(value: string): string {
 		.replaceAll(">", "&gt;")
 		.replaceAll('"', "&quot;")
 		.replaceAll("'", "&apos;");
-}
-
-function absolute(pathname: string): string {
-	return new URL(pathname, `${site.url}/`).href;
 }
 
 function cdata(value: string): string {
@@ -28,8 +25,8 @@ export function buildRss(): string {
 		.map(
 			(post) => `    <item>
       <title>${escapeXml(post.title)}</title>
-      <link>${escapeXml(absolute(post.url))}</link>
-      <guid isPermaLink="true">${escapeXml(absolute(post.url))}</guid>
+      <link>${escapeXml(absoluteUrl(post.url))}</link>
+      <guid isPermaLink="true">${escapeXml(absoluteUrl(post.url))}</guid>
       <description>${escapeXml(post.description)}</description>
       <pubDate>${pubDate(post.published)}</pubDate>
       <content:encoded><![CDATA[${cdata(post.html)}]]></content:encoded>
@@ -40,7 +37,7 @@ export function buildRss(): string {
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>${escapeXml(site.title)}</title>
-    <link>${escapeXml(site.url)}/</link>
+    <link>${escapeXml(site.url)}</link>
     <description>${escapeXml(site.description)}</description>
     <language>${site.locale}</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
@@ -56,8 +53,8 @@ export function buildAtom(): string {
 		.map(
 			(post) => `  <entry>
     <title>${escapeXml(post.title)}</title>
-    <link href="${escapeXml(absolute(post.url))}" rel="alternate" type="text/html"/>
-    <id>${escapeXml(absolute(post.url))}</id>
+    <link href="${escapeXml(absoluteUrl(post.url))}" rel="alternate" type="text/html"/>
+    <id>${escapeXml(absoluteUrl(post.url))}</id>
     <published>${post.published}T00:00:00Z</published>
     <updated>${post.published}T00:00:00Z</updated>
     <summary>${escapeXml(post.description)}</summary>
@@ -70,9 +67,9 @@ export function buildAtom(): string {
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>${escapeXml(site.title)}</title>
   <subtitle>${escapeXml(site.description)}</subtitle>
-  <link href="${escapeXml(site.url)}/" rel="alternate" type="text/html"/>
-  <link href="${escapeXml(absolute("/atom.xml"))}" rel="self" type="application/atom+xml"/>
-  <id>${escapeXml(site.url)}/</id>
+  <link href="${escapeXml(site.url)}" rel="alternate" type="text/html"/>
+  <link href="${escapeXml(absoluteUrl("/atom.xml"))}" rel="self" type="application/atom+xml"/>
+  <id>${escapeXml(site.url)}</id>
   <updated>${new Date().toISOString()}</updated>
   <language>${site.locale}</language>
 ${entries}
@@ -103,7 +100,7 @@ export function buildSitemap(): string {
 	const entries = getSitemapEntries()
 		.map(
 			(entry) => `  <url>
-    <loc>${escapeXml(absolute(entry.path))}</loc>${
+    <loc>${escapeXml(absoluteUrl(entry.path))}</loc>${
 			entry.lastmod ? `\n    <lastmod>${entry.lastmod}</lastmod>` : ""
 		}
   </url>`,
@@ -120,7 +117,7 @@ export function buildSitemapIndex(): string {
 	return `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>${escapeXml(absolute("/sitemap-0.xml"))}</loc>
+    <loc>${escapeXml(absoluteUrl("/sitemap-0.xml"))}</loc>
   </sitemap>
 </sitemapindex>
 `;
@@ -129,9 +126,9 @@ export function buildSitemapIndex(): string {
 export function buildRobots(): string {
 	return `User-agent: *
 Allow: /
-Disallow: /api/
-Disallow: /pagefind/
+Disallow: ${withBase("/api/")}
+Disallow: ${withBase("/pagefind/")}
 
-Sitemap: ${absolute("/sitemap.xml")}
+Sitemap: ${absoluteUrl("/sitemap.xml")}
 `;
 }

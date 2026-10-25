@@ -10,6 +10,9 @@ import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
 import type { TocHeading } from "../types";
+import { rehypeBaseLinks } from "./rehype-base-links";
+import { rehypeCodeFrame } from "./rehype-code-frame";
+import { rehypeTableWrap } from "./rehype-table-wrap";
 
 function demoteH1() {
 	return (tree: Root) => {
@@ -54,7 +57,10 @@ export function renderMarkdown(source: string): RenderedMarkdown {
 			target: "_blank",
 			rel: ["nofollow", "noopener", "noreferrer"],
 		})
+		.use(rehypeBaseLinks)
 		.use(rehypeHighlight, { detect: false, ignoreMissing: true })
+		.use(rehypeCodeFrame)
+		.use(rehypeTableWrap)
 		.use(() => (tree: Root) => {
 			visit(tree, "element", (node) => {
 				if (node.tagName !== "h2" && node.tagName !== "h3") return;

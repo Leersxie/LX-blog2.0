@@ -1,94 +1,122 @@
-# 部署
+# 部署与运维
 
-## 1. 当前假设
+## 1. 目标
 
-- 部署目标：GitHub Pages，仓库根路径。
-- 规范站点：`https://leersxie.github.io`（见 `src/config/site.ts`）。
-- 构建产物：`dist/`，含 `.nojekyll`、`404.html`、Pagefind、RSS、sitemap 与兼容 API。
-- 工作流：[`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml)。
+| 项 | 值 |
+|---|---|
+| GitHub 仓库 | <https://github.com/Leersxie/LX-blog2.0> |
+| Pages 地址 | <https://leersxie.github.io/LX-blog2.0/> |
+| 构建 base | `/LX-blog2.0/` |
+| 部署方式 | GitHub Actions → Pages artifact → `actions/deploy-pages` |
+| 构建产物 | `dist/`（含 `.nojekyll`、`404.html`、Pagefind、feed、sitemap、API JSON） |
 
-**这个新目录目前没有远端 remote，也没有实际部署。** 旧站仍由旧仓库的 `master` 发布，保持不动。
+项目页不是根用户站，因此所有内部 URL 都经过 `withBase()`；Vite `base` 与 `SITE_BASE` 必须一致。部署工作流已经设置：
 
-## 2. 首次部署到新仓库
+```yaml
+env:
+  SITE_BASE: /LX-blog2.0/
+```
 
-1. 在 GitHub 创建新仓库（不要复用旧博客仓库的 `master`，除非你明确准备切换生产）。
-2. 在本地新仓库中：
-   ```bash
-   git add .
-   git commit -m "feat: initialize NOCTILUX static site"
-   git remote add origin git@github.com:<owner>/<new-repo>.git
-   git push -u origin main
-   ```
-3. 仓库 Settings → Pages → Build and deployment → Source 选择 **GitHub Actions**。
-4. 仓库 Settings → Secrets and variables → Actions → New repository secret：
-   - `POST_PASSWORD_XIANGTU`：加密文章的实际密码。
-   - 如未来发布 cs2（目前为草稿），再添加 `POST_PASSWORD_CS2`。
-5. 等待 `CI & Deploy` 的 `quality → build → deploy` 完成。
-6. 如果仓库不是 `<owner>.github.io` 根站点，而是项目页，需要同步修改：
-   - `src/config/site.ts` 的 `site.url`；
-   - `vite.config.ts` 的 `base`；
-   - 站内绝对路径（当前按根路径写死，项目页需要统一加 base helper）。
-   当前未实现项目子路径，首次部署请使用根站点，或先完成 base path 改造。
+本地 root 开发可以省略 `SITE_BASE`；生产构建必须带项目前缀：
 
-## 3. CI 做了什么
+```powershell
+$env:SITE_BASE = "/LX-blog2.0/"
+pnpm build
+$env:SITE_BASE = "/LX-blog2.0/"
+pnpm preview
+# http://127.0.0.1:4321/LX-blog2.0/
+```
 
-`quality`：
+bash：
 
-- `pnpm check`：TypeScript 全量检查；
-- `pnpm test`：24 个单元测试；
-- `pnpm lint`：ESLint，不自动修改。
+```bash
+SITE_BASE=/LX-blog2.0/ pnpm build
+SITE_BASE=/LX-blog2.0/ pnpm preview
+```
 
-`build`：
+## 2. 首次部署清单
 
-- `pnpm install --frozen-lockfile`；
-- `POST_PASSWORD_XIANGTU` 来自 secret；PR 使用一次性 `ci-placeholder`，只验证构建，不部署；
-- `pnpm build`：Vite → prerender → Pagefind；
-- `pnpm links`：内部链接、资源、加密泄漏检查；
-- 非 PR 上传 `dist/` 为 Pages artifact。
+- [x] 新仓库 `Leersxie/LX-blog2.0` 创建并启用 Pages（build type: workflow）。
+- [x] 配置 secret `POST_PASSWORD_XIANGTU`。
+- [x] 工作流设置 `SITE_BASE=/LX-blog2.0/`。
+- [x] 构建、link check、Pagefind 索引。
+- [ ] 首次真实 Actions 运行（提交并推送后由本阶段完成）。
+- [ ] 部署后 smoke 的真实结果（由 workflow 的 `smoke` job 记录）。
 
-`deploy`：
+如在新环境重建：
 
-- 只在 `main` push 时运行；
-- `actions/deploy-pages@v4`；
-- 没有 Lighthouse gate。Lighthouse / CWV 仍待补（见 `docs/acceptance-checklist.md`）。
+1. 仓库 Settings → Pages → Source 选择 **GitHub Actions**。
+2. Settings → Secrets and variables → Actions → 新建 `POST_PASSWORD_XIANGTU`。
+3. 如未来发布 cs2，再添加 `POST_PASSWORD_CS2`。
+4. 推送 `main`，等待 `CI & Deploy` 的 `quality → build → deploy → smoke`。
 
-## 4. 本地预览
+## 3. CI 结构
+
+```text
+quality (ubuntu, Node 22)
+  install → check → test → lint
+build
+  install → build (SITE_BASE) → links → upload artifact
+deploy (main only)
+  actions/deploy-pages
+smoke (main only)
+  curl 首页 / 文章 / RSS / sitemap / Pagefind
+  未知路径必须返回 404
+```
+
+另有手动/每周 [`.github/workflows/lighthouse.yml`](../.github/workflows/lighthouse.yml)：
+
+- 生产 base 构建；
+- 启动 preview server；
+- Lighthouse 3 页 + axe 9 次扫描；
+- 上传 `docs/lighthouse/`、`docs/a11y-report.json`。
+
+PR 不能拿到生产密码：build job 在 PR 事件使用 `ci-placeholder`，只验证构建，不部署。
+
+## 4. 本地验收
 
 ```bash
 pnpm build
-pnpm preview
-# http://127.0.0.1:4321
+pnpm links
+pnpm preview                 # 另一个终端
+BASE_URL=http://127.0.0.1:4321/LX-blog2.0 pnpm test:e2e
+BASE_URL=http://127.0.0.1:4321/LX-blog2.0 pnpm search:check
+BASE_URL=http://127.0.0.1:4321/LX-blog2.0 pnpm audit:a11y
+BASE_URL=http://127.0.0.1:4321/LX-blog2.0 pnpm audit:lighthouse
 ```
 
-`preview` 模拟：
+Windows PowerShell 使用 `$env:BASE_URL = "..."; pnpm test:e2e`。
 
-- 目录末尾斜杠重定向；
-- `/posts/guestbook/`、`/guestbook/` 等 clean URL；
-- 未知路径返回真实 404；
-- `/rss.xml`、`/sitemap.xml`、`/api/*` 静态输出；
-- `.js` / `.css` / 图片的静态类型。
+## 5. 缓存 / 安全头
 
-## 5. 缓存与安全头
+GitHub Pages 不支持自定义响应头：
 
-GitHub Pages 不支持自定义响应头。以下文件不会在当前托管上生效：
+- 没有 CSP / X-Frame-Options / Permissions-Policy；
+- `public/_headers` 不会生效；
+- 第三方 Giscus / GTM / Meting 的隐私和 CSP 需要换托管平台后再补。
 
-- `public/_headers`（未创建）；
-- `vercel.json`（未创建）。
+若迁移到 Cloudflare Pages / Netlify，需要重新验证 base path、404 和响应头，不要假设当前行为可移植。
 
-因此不要声称新站有 CSP / X-Frame-Options。若切到 Cloudflare Pages / Netlify / Vercel，再补等价配置并重新验证。评论和统计是第三方 iframe/script，生产环境需单独审视隐私和 CSP。
+## 6. URL 兼容
 
-## 6. 回滚
+- 项目路径下：`https://leersxie.github.io/LX-blog2.0/guestbook/`。
+- 旧站根路径：`https://leersxie.github.io/guestbook/` 仍由旧仓库提供，**不会自动跳到新站**。
+- 新站保留旧路径结构、兼容副本、旧 sitemap 入口和旧 API；要接管根 URL，需要把同一 `dist/` 部署到用户站仓库或自定义域名，并重新生成 canonical/sitemap。
+- 不要在没有确认的情况下删除旧站；两者可以并行验证。
 
-- **部署回滚**：GitHub Actions 的 Pages 部署历史可回退到上一版本；或在 `main` 上 revert 对应 commit 后重新部署。
-- **仓库回滚**：本仓库保留初始 commit；旧博客仍在旧仓库，不受影响。
-- **内容回滚**：`content/posts` 是纯文本，删除/恢复文章只影响下一次构建；发布前用 `pnpm build` + `pnpm links` 验证。
-- **secret 轮换**：更新 `POST_PASSWORD_XIANGTU` 后重新部署；旧部署的密文不被新密码解开，需要重新构建。
+## 7. 回滚
 
-## 7. 已知限制
+- **部署回滚**：GitHub Pages 部署历史回退，或 revert 代码后重新触发 workflow。
+- **仓库回滚**：`git reset --hard <known-good-commit>`；不要强推到旧博客仓库。
+- **内容回滚**：恢复 `content/` 后重新构建；旧正文仍在旧仓库。
+- **密码轮换**：更新 secret 后重新部署；旧密文不再匹配新密码。
+- **旧站**：始终保留，不参与新站部署。
 
-- 未在真实 GitHub Pages 上验证；本报告只验证了静态目录和模拟 404。
-- 未做 Lighthouse / Core Web Vitals。
-- 未做真实移动设备 / 触屏 / 屏幕阅读器。
-- 评论需要 GitHub Discussions + giscus App；当前只验证 iframe 出现，未验证登录发帖。
-- 统计 GTM 只验证脚本注入；没有 consent UI。
-- Meting API 由第三方提供，播放依赖其 CDN；失败时显示错误、重试和网易云歌单链接。
+## 8. 已知限制
+
+- 未做真实手机、软键盘、屏幕阅读器实机。
+- Lighthouse 是移动端模拟 + 本地 Edge；不是真实网络。
+- Giscus 只验证 iframe/term，未验证登录发评论。
+- Meting 只验证歌单加载；未做长时间音频回归。
+- GTM 只验证注入；没有 consent UI。
+- 项目页部署路径使旧根 URL 不能自动复用；这是 GitHub Pages 项目站的限制。

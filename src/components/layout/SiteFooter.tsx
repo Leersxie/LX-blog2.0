@@ -2,7 +2,9 @@ import { ArrowUp, Music2, Rss } from "lucide-react";
 
 import { site } from "../../config/site";
 import { formatBuildDate } from "../../lib/format";
+import { withBase } from "../../lib/url";
 import type { BuildInfo } from "../../types";
+import { MotionToggle } from "./MotionToggle";
 
 interface SiteFooterProps {
 	build: BuildInfo;
@@ -18,7 +20,7 @@ export function SiteFooter({ build, onMusic }: SiteFooterProps) {
 					<p className="footer-anchor__line">
 						这里没有信息流，只有一条按时间排好的索引。
 					</p>
-					<a className="arrow-link" href="/archive/">
+					<a className="arrow-link" href={withBase("/archive/")}>
 						打开归档 <ArrowUp aria-hidden="true" size={15} />
 					</a>
 				</div>
@@ -26,18 +28,18 @@ export function SiteFooter({ build, onMusic }: SiteFooterProps) {
 					<div>
 						<p className="mono-label">PAGES</p>
 						{site.nav.slice(1).map((item) => (
-							<a key={item.path} href={item.path}>
+							<a key={item.path} href={withBase(item.path)}>
 								{item.label}
 							</a>
 						))}
 					</div>
 					<div>
 						<p className="mono-label">FEEDS</p>
-						<a href="/rss.xml">
+						<a href={withBase("/rss.xml")}>
 							RSS <Rss aria-hidden="true" size={13} />
 						</a>
-						<a href="/atom.xml">Atom</a>
-						<a href="/sitemap.xml">Sitemap</a>
+						<a href={withBase("/atom.xml")}>Atom</a>
+						<a href={withBase("/sitemap.xml")}>Sitemap</a>
 					</div>
 					<div>
 						<p className="mono-label">ELSEWHERE</p>
@@ -73,6 +75,7 @@ export function SiteFooter({ build, onMusic }: SiteFooterProps) {
 					<Music2 aria-hidden="true" size={14} />
 					歌单 / Meting
 				</button>
+				<MotionToggle />
 				<p>
 					评论由 Giscus 提供；统计由 Google Tag Manager 延迟加载；音乐来自 Meting
 					公共 API。

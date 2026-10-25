@@ -1,4 +1,5 @@
 import { site } from "../config/site";
+import { withBase } from "../lib/url";
 import type { PageData, SeoData } from "../types";
 
 export function escapeHtml(value: string): string {
@@ -39,9 +40,9 @@ export function buildHeadTags(seo: SeoData): string {
 		`<meta name="twitter:description" content="${escapeHtml(seo.description)}" />`,
 		`<meta name="twitter:image" content="${escapeHtml(seo.ogImage)}" />`,
 		`<meta name="theme-color" content="#0b0c11" />`,
-		`<link rel="icon" href="/favicon.svg" type="image/svg+xml" />`,
-		`<link rel="alternate" type="application/rss+xml" title="${escapeHtml(site.title)} · RSS" href="/rss.xml" />`,
-		`<link rel="alternate" type="application/atom+xml" title="${escapeHtml(site.title)} · Atom" href="/atom.xml" />`,
+		`<link rel="icon" href="${withBase("/favicon.svg")}" type="image/svg+xml" />`,
+		`<link rel="alternate" type="application/rss+xml" title="${escapeHtml(site.title)} · RSS" href="${withBase("/rss.xml")}" />`,
+		`<link rel="alternate" type="application/atom+xml" title="${escapeHtml(site.title)} · Atom" href="${withBase("/atom.xml")}" />`,
 	];
 	if (seo.publishedAt) {
 		lines.push(

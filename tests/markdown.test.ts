@@ -25,6 +25,32 @@ describe("markdown rendering", () => {
 		expect(html).toContain("noreferrer");
 	});
 
+	it("prefixes internal markdown links and assets with the deployment base", () => {
+		const { html } = renderMarkdown(
+			"[关于](/about/)\n\n![图](/assets/example.webp)\n\n[外部](https://example.com)",
+		);
+		expect(html).toContain('href="/LX-blog2.0/about/"');
+		expect(html).toContain('src="/LX-blog2.0/assets/example.webp"');
+		expect(html).toContain('href="https://example.com"');
+		expect(html).not.toContain('href="/LX-blog2.0/https');
+	});
+
+	it("wraps code fences with language and copy controls", () => {
+		const { html } = renderMarkdown("```ts\nconst answer = 42;\n```");
+		expect(html).toContain('class="code-frame"');
+		expect(html).toContain('data-code-copy');
+		expect(html).toContain(">TS<");
+		expect(html).toContain("answer");
+		expect(html).toContain("42");
+	});
+
+	it("wraps wide tables in a focusable scroll region", () => {
+		const { html } = renderMarkdown("| A | B |\n| - | - |\n| 1 | 2 |");
+		expect(html).toContain('class="table-scroll"');
+		expect(html).toContain('role="region"');
+		expect(html).toContain("<table>");
+	});
+
 	it("counts Chinese characters and Latin words", () => {
 		const stats = countWords("中文五个字 hello world");
 		expect(stats.words).toBeGreaterThanOrEqual(7);

@@ -32,6 +32,8 @@
 | 搜索/解密切换 spinner | `rotate` 循环 | 900ms | 停止循环，文本仍显示 |
 | 项目图 hover | `scale(1.015)` | 260ms | 关闭 |
 | 评论 lazy load | 无位移，直接出现 | — | 不变 |
+| 图片灯箱 | 背景 `opacity` + frame 出现 | 180ms | 瞬时 |
+| 代码复制反馈 | 文本变为“已复制” | 1800ms 后复位 | 保持文本反馈 |
 
 没有：
 
@@ -60,9 +62,13 @@
 
 部分组件还有局部 `scrollIntoView` / CSS 平滑滚动；全局规则会覆盖。
 
-**浏览器实测状态**：尚未在 Playwright 中显式 `emulateMedia({ reducedMotion: 'reduce' })` 验证；这是 Phase 6 的验收项。
+**浏览器实测状态**：已通过 Playwright 的 `reducedMotion: "reduce"` 检查，按钮 `transition-duration` 降为 `1e-05s`；页脚站点级“减少动效”开关也已验证写入 `data-motion="reduce"` 并可恢复。
 
-## 5. 将来可加的效果（需重新评审）
+## 5. 页面级性能与动效
+
+折叠区使用 `content-visibility: auto` 延后样式/布局，不改变动效时序；它不隐藏 DOM 文本，也不影响 Pagefind、SEO 或无障碍树。首页/文章/归档 Lighthouse 移动端 Performance 为 99 / 92 / 91。
+
+## 6. 将来可加的效果（需重新评审）
 
 - 文章 TOC 的细线进度（已有静态高亮，不依赖动画）。
 - 只在桌面、非 reduced-motion、非低性能设备上启用的局部转场。

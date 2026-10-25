@@ -33,9 +33,12 @@
 - [x] RSS / Atom / sitemap / robots。
 - [x] 旧 sitemap 入口与 API 兼容输出。
 - [x] 移动菜单。
+- [x] Giscus 保留旧 discussion term（`guestbook/`）。
 - [ ] Giscus 真实登录发评论。
 - [ ] 音乐真实音频播放、切歌、失败恢复。
-- [ ] 图片灯箱（当前无文章图片，未移植）。
+- [x] 项目图片灯箱（真实截图，Esc/焦点返回/方向键）。
+- [x] 代码复制交互（生成 fixture；构建期 wrapper 有单测）。
+- [ ] 文章内图片灯箱实机（现有文章无图片）。
 - [ ] 旧分类/标签查询参数的服务端过滤（当前 JS 过滤，no-JS 下显示全部）。
 
 ## 3. SEO
@@ -47,7 +50,8 @@
 - [x] sitemap 仅规范 URL；副本/404 排除。
 - [x] RSS / Atom 只含公开非加密内容。
 - [x] 每页唯一 H1（link-check 已断言）。
-- [x] 图片 alt / 装饰图空 alt（项目图片为装饰性）。
+- [x] 文章 OG 图逐篇生成；默认 OG 只用于非文章页。
+- [x] 图片 alt / 装饰图空 alt（项目图片由按钮 aria-label 说明）。
 - [ ] 逐文章 OG 图。
 - [ ] Schema 校验器（Google Rich Results）实际运行。
 - [ ] 外部链接爬虫 / 死链检查（当前只查内部）。
@@ -62,11 +66,12 @@
 - [x] 加密表单 label / error alert。
 - [x] `prefers-reduced-motion` 全局 CSS。
 - [x] 状态不只靠颜色。
-- [ ] axe / 屏幕阅读器。
-- [ ] 对比度测量（特别是 `--muted` / `--faint`）。
+- [x] axe（桌面 7 页 + 移动 2 页，9 次扫描 0 violations）。
+- [x] 对比度通过 axe；`--faint` 不再用于正文/标签关键文字。
+- [x] `prefers-reduced-motion` 与站点级减少动效开关的 Playwright 测试。
+- [ ] 屏幕阅读器。
 - [ ] 200% 缩放。
-- [ ] 触屏实机。
-- [ ] reduced-motion 浏览器显式测试。
+- [ ] 触屏实机 / 软键盘。
 
 ## 5. 性能
 
@@ -75,9 +80,9 @@
 - [x] 无 WebGL / 动画库 / 第三方 UI 套件。
 - [x] 字体只加载 Latin 子集；中文走系统字体。
 - [x] 外部 Giscus / GTM / Meting 延迟加载。
-- [ ] Lighthouse（Performance / A11y / Best Practices / SEO）。
-- [ ] LCP / INP / CLS 真实测量。
-- [ ] 4G / 弱网。
+- [x] Lighthouse（Performance / A11y / Best Practices / SEO）：首页 99/100/100/100，文章 92/100/100/100，归档 91/100/100/100。
+- [x] LCP / TBT / CLS 本地移动端模拟测量（LCP 1.2–1.6s，TBT 60–390ms，CLS ≤0.002）。
+- [ ] 真实 4G / 弱网。
 - [ ] 页面级 JS 拆分（当前单入口）。
 
 ## 6. 安全 / 隐私
@@ -95,15 +100,15 @@
 ## 7. 工程
 
 - [x] `pnpm check` 通过。
-- [x] `pnpm test` 24/24。
+- [x] `pnpm test` 28/28。
 - [x] `pnpm lint` 通过。
-- [x] `pnpm build` 通过，11 HTML / 9 sitemap。
+- [x] `pnpm build` 通过，11 HTML / 9 sitemap，Pagefind 523 词。
 - [x] `pnpm links` 0 缺失。
-- [x] `pnpm test:e2e` 全部通过（本机 Edge）。
-- [x] `pnpm dev` 与 `pnpm preview` 已运行。
+- [x] `pnpm test:e2e` 全部通过（本机 Edge，项目 base）。
+- [x] `pnpm dev` 与 `pnpm preview` 已运行；base 构建 + base preview 已运行。
 - [x] GitHub Actions 配置存在。
-- [ ] CI 在 Ubuntu / Node 22 实际跑过。
-- [ ] 新仓库真实 GitHub Pages 部署。
+- [ ] CI 在 Ubuntu / Node 22 实际跑过（推送后验证）。
+- [ ] 新仓库真实 GitHub Pages 部署（推送后验证）。
 - [ ] Lighthouse CI gate。
 - [ ] 生产回滚演练。
 - [ ] 真实内容更新后的再验证（当前只有 4 篇）。
@@ -112,8 +117,8 @@
 
 当前可以进入 **Phase 3/4 的逐页精修与内容补齐**，但不能宣称已达到最终发布标准。最优先的未完成项：
 
-1. 真实 GitHub Pages 部署 + 回滚验证；
-2. Lighthouse / CWV / axe；
-3. GitHub Actions 第一次真实跑通；
-4. Giscus 真实发评论、Meting 真实音频播放；
-5. 加密密码轮换和私有内容源策略。
+1. GitHub Actions 首次真实运行 + Pages 部署 + smoke / 回滚验证；
+2. Giscus 真实发评论、Meting 真实音频播放；
+3. 真实手机、软键盘、屏幕阅读器、200% 缩放；
+4. 加密密码轮换和私有内容源策略；
+5. Lighthouse CI gate 与周更性能趋势。

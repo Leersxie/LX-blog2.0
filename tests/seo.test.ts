@@ -8,7 +8,7 @@ describe("SEO document data", () => {
 		const paths = ["/", "/archive/", "/projects/", "/about/", "/friends/", "/guestbook/"];
 		const seo = paths.map((path) => getSeo(getPageData(path)!));
 		expect(new Set(seo.map((item) => item.canonical)).size).toBe(paths.length);
-		expect(seo.every((item) => item.canonical.startsWith("https://leersxie.github.io/"))).toBe(true);
+		expect(seo.every((item) => item.canonical.startsWith("https://leersxie.github.io/LX-blog2.0/"))).toBe(true);
 		expect(seo.every((item) => item.noindex === false)).toBe(true);
 	});
 
@@ -16,7 +16,7 @@ describe("SEO document data", () => {
 		const page = getPageData("/posts/guestbook/")!;
 		const seo = getSeo(page);
 		expect(seo.noindex).toBe(true);
-		expect(seo.canonical).toBe("https://leersxie.github.io/guestbook/");
+		expect(seo.canonical).toBe("https://leersxie.github.io/LX-blog2.0/guestbook/");
 	});
 
 	it("emits valid BlogPosting and BreadcrumbList data for articles", () => {
@@ -33,8 +33,15 @@ describe("SEO document data", () => {
 		expect(types).toContain("Person");
 	});
 
+	it("uses a per-post social image when available", () => {
+		const seo = getSeo(getPageData("/guestbook/")!);
+		expect(seo.ogImage).toBe(
+			"https://leersxie.github.io/LX-blog2.0/og/guestbook.png",
+		);
+	});
+
 	it("sets a default social image at 1200x630", () => {
 		const seo = getSeo(getPageData("/")!);
-		expect(seo.ogImage).toBe("https://leersxie.github.io/og-default.png");
+		expect(seo.ogImage).toBe("https://leersxie.github.io/LX-blog2.0/og-default.png");
 	});
 });

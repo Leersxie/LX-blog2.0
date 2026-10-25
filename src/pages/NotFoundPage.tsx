@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowUpRight, Search } from "lucide-react";
 
+import { withBase } from "../lib/url";
 import type { PageData } from "../types";
 
 interface NotFoundPageProps {
@@ -34,10 +35,10 @@ export function NotFoundPage({ data }: NotFoundPageProps) {
 				>
 					<Search aria-hidden="true" size={15} /> 搜索档案
 				</button>
-				<a className="button" href="/">
+				<a className="button" href={withBase("/")}>
 					<ArrowLeft aria-hidden="true" size={15} /> 返回首页
 				</a>
-				<a className="text-link" href="/archive/">
+				<a className="text-link" href={withBase("/archive/")}>
 					浏览归档 <ArrowUpRight aria-hidden="true" size={14} />
 				</a>
 			</div>

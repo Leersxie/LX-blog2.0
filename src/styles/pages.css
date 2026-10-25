@@ -823,9 +823,9 @@
 .friend-card__tags span {
 	padding: 1px 4px;
 	border: 1px solid var(--line);
-	color: var(--faint);
+	color: var(--muted);
 	font-family: var(--font-mono);
-	font-size: 8px;
+	font-size: 9px;
 }
 
 .friends-side {
@@ -954,11 +954,21 @@
 }
 
 .project-card__media {
-	overflow: hidden;
+	display: block;
+	width: 100%;
 	min-height: 150px;
+	padding: 0;
+	overflow: hidden;
+	cursor: zoom-in;
 	border: 1px solid var(--line);
 	border-radius: var(--radius-inner);
 	background: var(--surface);
+	text-align: left;
+}
+
+.project-card__media:focus-visible {
+	outline: 2px solid var(--violet);
+	outline-offset: 3px;
 }
 
 .project-card__media img {

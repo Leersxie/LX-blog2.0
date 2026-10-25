@@ -14,7 +14,11 @@ function sendTheme(theme: "light" | "dark"): void {
 	);
 }
 
-export function Comments() {
+interface CommentsProps {
+	term: string;
+}
+
+export function Comments({ term }: CommentsProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -36,6 +40,7 @@ export function Comments() {
 			script.setAttribute("data-category", site.giscus.category);
 			script.setAttribute("data-category-id", site.giscus.categoryId);
 			script.setAttribute("data-mapping", site.giscus.mapping);
+			script.setAttribute("data-term", term);
 			script.setAttribute("data-strict", "0");
 			script.setAttribute(
 				"data-reactions-enabled",
@@ -73,7 +78,7 @@ export function Comments() {
 			observer?.disconnect();
 			window.removeEventListener("noctilux:theme", onTheme);
 		};
-	}, []);
+	}, [term]);
 
 	return (
 		<section className="comments" aria-labelledby="comments-title" data-pagefind-ignore>

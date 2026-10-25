@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { GoogleTagManager } from "./components/analytics/GoogleTagManager";
+import { ArticleInteractions } from "./components/article/ArticleInteractions";
 import { SiteFooter } from "./components/layout/SiteFooter";
 import { SiteHeader } from "./components/layout/SiteHeader";
 import { MusicPlayer } from "./components/music/MusicPlayer";
@@ -100,6 +101,7 @@ export function App({ data }: { data: PageData }) {
 			<SiteFooter build={data.build} onMusic={openMusic} />
 			<SearchDialog open={searchOpen} onClose={closeSearch} />
 			<MusicPlayer open={musicOpen} onClose={closeMusic} />
+			<ArticleInteractions />
 			<GoogleTagManager />
 		</div>
 	);

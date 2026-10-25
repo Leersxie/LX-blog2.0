@@ -2,6 +2,7 @@ import { ArrowUpRight, MapPin } from "lucide-react";
 
 import { ArticleBody } from "../components/article/ArticleBody";
 import { site } from "../config/site";
+import { withBase } from "../lib/url";
 import type { PageData } from "../types";
 
 interface AboutPageProps {
@@ -42,7 +43,7 @@ export function AboutPage({ data }: AboutPageProps) {
 								return (
 								<a
 									key={project.id}
-									href={href}
+									href={withBase(href)}
 									{...(href.startsWith("http")
 										? { target: "_blank", rel: "noopener noreferrer" }
 										: {})}

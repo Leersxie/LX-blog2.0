@@ -1,5 +1,7 @@
-# Phase 1/2 阶段报告
+# Phase 1/2 阶段报告（历史）
 
+> **历史文档**：这里记录 Phase 1/2 的阶段性状态。最终 Phase 0–6、部署、Lighthouse、axe 与回滚证据见 [final-report.md](final-report.md)。
+>
 > 日期：2026-10-25
 > 范围：新仓库初始化、技术 spike、设计系统，以及可运行的最小底座 + 核心页面。
 > 旧博客：未修改，仍在 `../legacy/master` / 原 GitHub 仓库。

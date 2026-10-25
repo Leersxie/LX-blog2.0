@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowUpRight, ListFilter, X } from "lucide-react";
 
 import { formatDate, readingLabel } from "../lib/format";
+import { withBase } from "../lib/url";
 import type { PageData, PostSummary } from "../types";
 
 type Filter = { type: "tag" | "category"; value: string } | null;
@@ -52,7 +53,7 @@ export function ArchivePage({ data }: ArchivePageProps) {
 
 	const apply = (next: Filter) => {
 		setFilter(next);
-		window.history.replaceState({}, "", filterToUrl(next));
+		window.history.replaceState({}, "", withBase(filterToUrl(next)));
 	};
 
 	const filtered = useMemo(() => {
@@ -160,7 +161,7 @@ export function ArchivePage({ data }: ArchivePageProps) {
 							</div>
 							<div className="archive-list">
 								{posts.map((post, index) => (
-									<a className="archive-entry" href={post.url} key={post.id}>
+									<a className="archive-entry" href={withBase(post.url)} key={post.id}>
 										<span className="archive-entry__index mono-label">
 											{String(index + 1).padStart(2, "0")}
 										</span>
@@ -196,8 +197,8 @@ export function ArchivePage({ data }: ArchivePageProps) {
 			<div className="archive-footer">
 				<p className="mono-label">SUBSCRIBE / RSS / ATOM</p>
 				<p>
-					想持续收到更新，可以使用 <a href="/rss.xml">RSS</a> 或{" "}
-					<a href="/atom.xml">Atom</a>。
+					想持续收到更新，可以使用 <a href={withBase("/rss.xml")}>RSS</a> 或{" "}
+					<a href={withBase("/atom.xml")}>Atom</a>。
 				</p>
 			</div>
 		</div>

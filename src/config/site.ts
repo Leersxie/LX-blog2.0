@@ -1,3 +1,4 @@
+import { absoluteUrl } from "../lib/url";
 import type { SiteConfig } from "../types";
 
 /**
@@ -9,7 +10,7 @@ export const site: SiteConfig = {
 	title: "Leersxie · 夜航档案",
 	description:
 		"LX 的个人技术档案：化学、心理学、代码与一些还没想清楚的想法。",
-	url: "https://leersxie.github.io",
+	url: absoluteUrl("/"),
 	lang: "zh-CN",
 	locale: "zh_CN",
 	startDate: "2026-03-28",
@@ -58,7 +59,9 @@ export const site: SiteConfig = {
 		repoId: "R_kgDORy5vYQ",
 		category: "Announcements",
 		categoryId: "DIC_kwDORy5vYc4DHE69",
-		mapping: "pathname",
+		// "specific" lets the site keep the old discussion term while living
+		// under the /LX-blog2.0/ GitHub Pages project path.
+		mapping: "specific",
 		reactionsEnabled: "1",
 		emitMetadata: "0",
 		inputPosition: "top",

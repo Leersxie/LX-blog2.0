@@ -93,7 +93,23 @@ draft: false
 - 外链自动加 `target="_blank" rel="nofollow noopener noreferrer"`。
 - 原始 HTML 不会当作可执行标记渲染；需要复杂组件时，在 React 页面层实现，不要把正文和视觉组件耦合。
 
-## 8. 发布前检查
+## 8. 每篇文章的 OG 图
+
+默认 OG 图在 `public/og-default.png`。每篇已发布文章会优先使用：
+
+```text
+public/og/<文章文件名>.png
+```
+
+生成脚本：
+
+```bash
+python scripts/make-og.py
+```
+
+它会读取 `content/posts/*.md` 的标题、日期、分类、标签，为已发布文章生成确定性的 1200×630 PNG，并跳过草稿。图片生成依赖 Pillow 与 Windows 中文字体；生成结果应提交，CI 只引用文件，不需要 Pillow。新增/修改标题后手动重跑并在 PR diff 中检查。
+
+## 9. 发布前检查
 
 ```bash
 pnpm check
@@ -101,7 +117,7 @@ pnpm test
 pnpm lint
 pnpm build
 pnpm links
-pnpm test:e2e   # 本机 Edge
+pnpm test:e2e   # 本机 Edge；项目页需 BASE_URL
 pnpm search:check
 ```
 

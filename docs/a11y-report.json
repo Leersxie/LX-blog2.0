@@ -1,0 +1,56 @@
+[
+  {
+    "route": "/",
+    "name": "home",
+    "viewport": "1440x1000",
+    "violations": []
+  },
+  {
+    "route": "/guestbook/",
+    "name": "article",
+    "viewport": "1440x1000",
+    "violations": []
+  },
+  {
+    "route": "/archive/",
+    "name": "archive",
+    "viewport": "1440x1000",
+    "violations": []
+  },
+  {
+    "route": "/projects/",
+    "name": "projects",
+    "viewport": "1440x1000",
+    "violations": []
+  },
+  {
+    "route": "/about/",
+    "name": "about",
+    "viewport": "1440x1000",
+    "violations": []
+  },
+  {
+    "route": "/friends/",
+    "name": "friends",
+    "viewport": "1440x1000",
+    "violations": []
+  },
+  {
+    "route": "/posts/xiangtuzhongguo-analysis/",
+    "name": "encrypted",
+    "viewport": "1440x1000",
+    "violations": []
+  },
+  {
+    "route": "/",
+    "name": "home-mobile",
+    "viewport": "390x844",
+    "violations": []
+  },
+  {
+    "route": "/guestbook/",
+    "name": "article-mobile",
+    "viewport": "390x844",
+    "violations": []
+  }
+]

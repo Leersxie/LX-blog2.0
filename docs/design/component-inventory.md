@@ -33,8 +33,12 @@
 | `ReadingProgress` | `components/article/ReadingProgress.tsx` | 顶部 2px 进度条 | 仅 client；无动画依赖 |
 | `ArticleToc` | `components/article/ArticleToc.tsx` | 桌面目录 + 当前标题高亮 | 解密后由父级更新 headings |
 | `MobileToc` | 同上 | `<details>` 目录 | 无 JS 也可展开 |
-| `Comments` | `components/comments/Comments.tsx` | Giscus，IntersectionObserver 懒加载，主题同步 | iframe 加载已测；真实登录发帖未测 |
+| `Comments` | `components/comments/Comments.tsx` | Giscus，IntersectionObserver 懒加载，主题同步；`data-mapping="specific"` + legacy term | iframe/term 已测；真实登录发帖未测 |
+| `ArticleInteractions` | `components/article/ArticleInteractions.tsx` | 代码复制、文章图片灯箱、Esc/方向键/焦点陷阱/焦点返回 | 项目图真实测试；代码复制用生成 fixture 测试 |
 | `Article license` | 内联于 ArticlePage | CC BY-NC-SA 说明 | 外链带 noopener |
+| `CodeFrame` | `server/rehype-code-frame.ts` | 语言标签 + 复制按钮 + 横向滚动 | 复制按钮无 JS 时隐藏 |
+| `TableWrap` | `server/rehype-table-wrap.ts` | 可聚焦横向滚动表格容器 | 无 JS 仍可滚动 |
+| `ImageLightbox` | 内嵌 ArticleInteractions | 图片放大、前后切换、焦点管理 | 项目图与文章图共用 |
 
 ## 搜索
 
@@ -63,6 +67,7 @@
 | 组件 | 路径 | 职责 | 状态 |
 |---|---|---|---|
 | Theme toggle | `SiteHeader` | 切换 `data-theme` + localStorage | 首屏 inline script 防闪白；Giscus 接收 `noctilux:theme` |
+| `MotionToggle` | `components/layout/MotionToggle.tsx` | 站点级 `data-motion="reduce"` | 持久化；系统媒体查询独立生效 |
 | `GoogleTagManager` | `components/analytics/GoogleTagManager.tsx` | 交互或 8s 后注入 GTM；noscript iframe | 只测脚本注入；没有 consent UI |
 
 ## 服务端
@@ -79,9 +84,10 @@
 ## 未完成 / 需要后续
 
 - 组件级视觉回归截图（当前只做页面级）。
-- 图片灯箱（旧站有；当前文章无图片，未移植）。
+- 文章内图片灯箱（项目图已实测；现有文章无图片，文章图未实机点开）。
 - 阅读进度/目录在超长文中的性能测试。
 - 评论登录、提交、删除、主题切换的真实浏览器回归。
 - 音乐播放/暂停/切歌的真实音频回归。
+- 真实手机软键盘、屏幕阅读器与 200% 缩放。
 - 搜索无结果、索引损坏、网络超时的自动化测试（错误 UI 已实现）。
 - Lighthouse / axe / 真实设备。

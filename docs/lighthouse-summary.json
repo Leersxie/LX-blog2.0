@@ -1,0 +1,53 @@
+[
+  {
+    "name": "home",
+    "route": "/",
+    "scores": {
+      "performance": 99,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "FCP": "1.6 s",
+      "LCP": "1.6 s",
+      "TBT": "60 ms",
+      "CLS": "0",
+      "SI": "1.6 s"
+    }
+  },
+  {
+    "name": "article",
+    "route": "/guestbook/",
+    "scores": {
+      "performance": 92,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "FCP": "1.1 s",
+      "LCP": "1.3 s",
+      "TBT": "350 ms",
+      "CLS": "0.002",
+      "SI": "1.1 s"
+    }
+  },
+  {
+    "name": "archive",
+    "route": "/archive/",
+    "scores": {
+      "performance": 91,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "FCP": "1.0 s",
+      "LCP": "1.2 s",
+      "TBT": "390 ms",
+      "CLS": "0",
+      "SI": "1.3 s"
+    }
+  }
+]

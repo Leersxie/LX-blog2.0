@@ -42,6 +42,7 @@ jobs:
     needs: quality
     runs-on: ubuntu-latest
     env:
+      SITE_BASE: /LX-blog2.0/
       POST_PASSWORD_XIANGTU: ${{ github.event_name == 'pull_request' && 'ci-placeholder' || secrets.POST_PASSWORD_XIANGTU }}
     steps:
       - uses: actions/checkout@v4
@@ -73,7 +74,31 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+
+  smoke:
+    name: Post-deploy smoke test
+    needs: deploy
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check production routes
+        env:
+          PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          test -n "$PAGE_URL"
+          curl -fsS "$PAGE_URL" | grep -q "夜航档案"
+          curl -fsS "${PAGE_URL}guestbook/" | grep -q "留言板"
+          curl -fsS "${PAGE_URL}posts/xiangtuzhongguo-analysis/" | grep -qi "noindex\|加密\|password"
+          curl -fsS "${PAGE_URL}rss.xml" | grep -q "<rss"
+          curl -fsS "${PAGE_URL}sitemap.xml" | grep -q "<urlset"
+          curl -fsS "${PAGE_URL}pagefind/pagefind.js" | grep -q "pagefind"
+          code=$(curl -s -o /dev/null -w "%{http_code}" "${PAGE_URL}definitely-missing/")
+          test "$code" = "404"
+          echo "smoke ok: $PAGE_URL"

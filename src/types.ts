@@ -81,6 +81,7 @@ export interface PostSummary {
 	wordCount: number;
 	readingMinutes: number;
 	cover?: string;
+	ogImage?: string;
 	url: string;
 	canonicalPath: string;
 	isCopy: boolean;
@@ -193,5 +194,7 @@ export interface PagefindResultData {
 	excerpt: string;
 	meta: {
 		title?: string;
+		category?: string;
+		date?: string;
 	};
 }

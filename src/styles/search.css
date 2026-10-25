@@ -155,6 +155,11 @@
 	font-weight: 520;
 }
 
+.search-result__meta {
+	margin: 2px 0 4px;
+	color: var(--faint);
+}
+
 .search-result__excerpt {
 	display: -webkit-box;
 	overflow: hidden;

@@ -2,6 +2,7 @@ import { ArrowDownRight, ArrowUpRight, Circle } from "lucide-react";
 
 import { site } from "../config/site";
 import { formatDate, readingLabel } from "../lib/format";
+import { withBase } from "../lib/url";
 import type { PageData, Project } from "../types";
 
 interface HomePageProps {
@@ -19,7 +20,7 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
 	return (
 		<a
 			className="project-row"
-			href={href}
+			href={withBase(href)}
 			{...(href.startsWith("http")
 				? { target: "_blank", rel: "noopener noreferrer" }
 				: {})}
@@ -73,10 +74,10 @@ export function HomePage({ data }: HomePageProps) {
 							喜欢化学，对心理学感兴趣。原 UTPV 制作者，现在慢慢做文字 PV。
 						</p>
 						<div className="home-hero__actions">
-							<a className="button button--solid" href="/archive/">
+							<a className="button button--solid" href={withBase("/archive/")}>
 								翻阅记录 <ArrowDownRight aria-hidden="true" size={16} />
 							</a>
-							<a className="button" href="/about/">
+							<a className="button" href={withBase("/about/")}>
 								关于我
 							</a>
 						</div>
@@ -108,7 +109,7 @@ export function HomePage({ data }: HomePageProps) {
 							<span>ARCHIVE INDEX / OPEN ACCESS / 2026</span>
 						</div>
 						{latest ? (
-							<a className="hero-latest" href={latest.url}>
+							<a className="hero-latest" href={withBase(latest.url)}>
 								<span className="mono-label">LATEST / {formatDate(latest.published)}</span>
 								<strong>{latest.title}</strong>
 								<span>{latest.description}</span>
@@ -130,7 +131,7 @@ export function HomePage({ data }: HomePageProps) {
 						<p className="mono-label">INDEX / 01</p>
 						<h2 id="recent-title">最近记录</h2>
 					</div>
-					<a className="text-link" href="/archive/">
+					<a className="text-link" href={withBase("/archive/")}>
 						全部 {data.build.publishedCount} 篇 <ArrowUpRight size={14} />
 					</a>
 				</div>
@@ -139,7 +140,7 @@ export function HomePage({ data }: HomePageProps) {
 						<p className="empty-state">还没有公开记录。</p>
 					) : (
 						posts.map((post, index) => (
-							<a className="post-row" href={post.url} key={post.id}>
+							<a className="post-row" href={withBase(post.url)} key={post.id}>
 								<span className="post-row__index mono-label">
 									{String(index + 1).padStart(2, "0")}
 								</span>
@@ -171,7 +172,7 @@ export function HomePage({ data }: HomePageProps) {
 						<p className="mono-label">INDEX / 02</p>
 						<h2 id="projects-title">正在做的东西</h2>
 					</div>
-					<a className="text-link" href="/projects/">
+					<a className="text-link" href={withBase("/projects/")}>
 						全部项目 <ArrowUpRight size={14} />
 					</a>
 				</div>
@@ -190,7 +191,7 @@ export function HomePage({ data }: HomePageProps) {
 				<p>
 					这里不是作品集，也不是信息流。它更像一张持续维护的桌面：文章按时间排列，项目按状态排列，其余东西慢慢补。
 				</p>
-				<a className="text-link" href="/about/">
+				<a className="text-link" href={withBase("/about/")}>
 					继续读关于页 <ArrowUpRight size={14} />
 				</a>
 			</section>

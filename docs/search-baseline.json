@@ -5,15 +5,15 @@
     "items": [
       {
         "title": "留言板",
-        "url": "/guestbook/"
+        "url": "/LX-blog2.0/guestbook/"
       },
       {
         "title": "友链",
-        "url": "/friends/"
+        "url": "/LX-blog2.0/friends/"
       },
       {
         "title": "项目",
-        "url": "/projects/"
+        "url": "/LX-blog2.0/projects/"
       }
     ]
   },
@@ -23,7 +23,7 @@
     "items": [
       {
         "title": "一些关于《乡土中国》的解析",
-        "url": "/posts/xiangtuzhongguo-analysis/"
+        "url": "/LX-blog2.0/posts/xiangtuzhongguo-analysis/"
       }
     ]
   },
@@ -33,7 +33,7 @@
     "items": [
       {
         "title": "项目",
-        "url": "/projects/"
+        "url": "/LX-blog2.0/projects/"
       }
     ]
   },
@@ -43,7 +43,7 @@
     "items": [
       {
         "title": "关于",
-        "url": "/about/"
+        "url": "/LX-blog2.0/about/"
       }
     ]
   },

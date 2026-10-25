@@ -1,6 +1,7 @@
 import { ArrowUpRight, Link2 } from "lucide-react";
 
 import { ArticleBody } from "../components/article/ArticleBody";
+import { withBase } from "../lib/url";
 import type { Friend, PageData } from "../types";
 
 interface FriendsPageProps {
@@ -73,7 +74,7 @@ export function FriendsPage({ data }: FriendsPageProps) {
 						<p>
 							留下站名、链接、一句话简介和头像地址即可。没有主题限制，但希望站点是认真维护的。
 						</p>
-						<a className="button button--solid" href="/guestbook/">
+						<a className="button button--solid" href={withBase("/guestbook/")}>
 							<Link2 aria-hidden="true" size={15} /> 去留言板
 						</a>
 					</div>

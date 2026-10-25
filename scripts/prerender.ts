@@ -25,7 +25,22 @@ if (!fs.existsSync(TEMPLATE)) {
 	);
 }
 
-const template = fs.readFileSync(TEMPLATE, "utf8");
+const rawTemplate = fs.readFileSync(TEMPLATE, "utf8");
+const cssFile = fs
+	.readdirSync(path.join(DIST, "assets"))
+	.find((file) => file.startsWith("style-") && file.endsWith(".css"));
+const template =
+	cssFile === undefined
+		? rawTemplate
+		: rawTemplate.replace(
+				/<link[^>]+rel="stylesheet"[^>]*>/,
+				`<style>${fs.readFileSync(path.join(DIST, "assets", cssFile), "utf8")}</style>`,
+			);
+if (cssFile !== undefined && template !== rawTemplate) {
+	// The stylesheet is now inlined in every document; keeping the orphaned
+	// asset would only confuse deploy reviewers.
+	fs.unlinkSync(path.join(DIST, "assets", cssFile));
+}
 const routes = getRoutes();
 let written = 0;
 

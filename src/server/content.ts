@@ -195,6 +195,10 @@ function loadPosts(): LoadedPost[] {
 		}
 
 		const description = fm.description || excerptFrom(parsed.content);
+		const ogFile = `public/og/${id.replaceAll("/", "-")}.png`;
+		const ogImage = fs.existsSync(path.join(ROOT, ogFile))
+			? `/og/${id.replaceAll("/", "-")}.png`
+			: undefined;
 		const summary: PostSummary = {
 			id,
 			title: fm.title,
@@ -208,6 +212,7 @@ function loadPosts(): LoadedPost[] {
 			wordCount: stats.words,
 			readingMinutes: stats.minutes,
 			cover: fm.cover,
+			ogImage,
 			url: canonicalPath,
 			canonicalPath,
 			isCopy: false,

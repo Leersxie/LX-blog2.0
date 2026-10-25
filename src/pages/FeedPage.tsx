@@ -1,5 +1,6 @@
 import { ArrowUpRight, Rss } from "lucide-react";
 
+import { withBase } from "../lib/url";
 import type { PageData } from "../types";
 
 interface FeedPageProps {
@@ -8,7 +9,7 @@ interface FeedPageProps {
 
 export function FeedPage({ data }: FeedPageProps) {
 	const isRss = data.feed === "rss";
-	const href = isRss ? "/rss.xml" : "/atom.xml";
+	const href = withBase(isRss ? "/rss.xml" : "/atom.xml");
 	const type = isRss ? "RSS 2.0" : "Atom";
 	return (
 		<div className="page feed-page">
@@ -35,7 +36,7 @@ export function FeedPage({ data }: FeedPageProps) {
 						<a className="button button--solid" href={href}>
 							<Rss aria-hidden="true" size={15} /> 打开 {type}
 						</a>
-						<a className="text-link" href="/archive/">
+						<a className="text-link" href={withBase("/archive/")}>
 							浏览归档 <ArrowUpRight aria-hidden="true" size={14} />
 						</a>
 					</div>
@@ -56,7 +57,7 @@ export function FeedPage({ data }: FeedPageProps) {
 					<div>
 						<dt className="mono-label">ALTERNATE</dt>
 						<dd>
-							<a href={isRss ? "/atom/" : "/rss/"}>
+							<a href={withBase(isRss ? "/atom/" : "/rss/")}>
 								{isRss ? "Atom" : "RSS"} 说明页
 							</a>
 						</dd>

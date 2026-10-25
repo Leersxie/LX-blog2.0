@@ -4,6 +4,8 @@ import path from "node:path";
 
 const root = path.join(process.cwd(), "dist");
 const port = Number(process.env.PORT || 4321);
+const rawBase = process.env.SITE_BASE || "/";
+const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
 
 const types = {
 	".html": "text/html; charset=utf-8",
@@ -31,7 +33,25 @@ function safePath(pathname) {
 }
 
 const server = http.createServer((request, response) => {
-	const pathname = new URL(request.url || "/", "http://localhost").pathname;
+	let pathname = new URL(request.url || "/", "http://localhost").pathname;
+	if (base !== "/") {
+		if (pathname === "/") {
+			response.writeHead(302, { Location: base });
+			response.end();
+			return;
+		}
+		if (pathname === base.replace(/\/$/, "")) {
+			response.writeHead(308, { Location: base });
+			response.end();
+			return;
+		}
+		if (!pathname.startsWith(base)) {
+			response.writeHead(404, { "Content-Type": types[".html"] });
+			response.end(fs.readFileSync(path.join(root, "404.html")));
+			return;
+		}
+		pathname = `/${pathname.slice(base.length)}`;
+	}
 	let file = safePath(pathname);
 	if (!file) {
 		response.statusCode = 400;

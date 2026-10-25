@@ -4,7 +4,7 @@ import path from "node:path";
 import { chromium } from "playwright-core";
 
 const EDGE = process.env.EDGE_PATH || "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
-const BASE = process.env.BASE_URL || "http://127.0.0.1:4321";
+const BASE = (process.env.BASE_URL || "http://127.0.0.1:4321").replace(/\/$/, "");
 const SHOTS = path.join(process.cwd(), "docs", "screenshots");
 
 if (!process.env.POST_PASSWORD_XIANGTU) {
@@ -34,11 +34,13 @@ const check = (condition, message) => {
 	console.log(`${condition ? "PASS" : "FAIL"} ${message}`);
 };
 
-async function newPage(viewport, javaScriptEnabled = true) {
+async function newPage(viewport, javaScriptEnabled = true, options = {}) {
 	const context = await browser.newContext({
 		viewport,
 		javaScriptEnabled,
 		deviceScaleFactor: 1,
+		permissions: ["clipboard-read", "clipboard-write"],
+		...options,
 	});
 	const page = await context.newPage();
 	page.on("pageerror", (error) => {
@@ -80,6 +82,8 @@ async function screenshot(page, name, fullPage = false) {
 	await page.locator(".search-result").first().waitFor({ timeout: 5000 });
 	const resultCount = await page.locator(".search-result").count();
 	check(resultCount > 0, "Pagefind returns results for 留言");
+	const resultMeta = await page.locator(".search-result__meta").first().innerText();
+	check(resultMeta.includes("日常"), "search results include category/date metadata");
 	await screenshot(page, "search-desktop.png");
 	await page.keyboard.press("ArrowDown");
 	const activeResult = await page.locator(".search-result.is-active").count();
@@ -91,6 +95,18 @@ async function screenshot(page, name, fullPage = false) {
 		document.activeElement?.getAttribute("aria-label"),
 	);
 	check(focusReturned === "打开搜索", "search returns focus to its trigger");
+
+	// Site-level reduced-motion preference.
+	await page.getByRole("button", { name: "减少动效" }).click();
+	check(
+		(await page.evaluate(() => document.documentElement.dataset.motion)) === "reduce",
+		"motion toggle sets a site-level reduced-motion preference",
+	);
+	await page.getByRole("button", { name: "恢复动效" }).click();
+	check(
+		(await page.evaluate(() => document.documentElement.dataset.motion)) === undefined,
+		"motion toggle restores full motion",
+	);
 
 	// Enter in the search result navigates to the article.
 	await page.keyboard.press("/");
@@ -151,6 +167,10 @@ async function screenshot(page, name, fullPage = false) {
 	await screenshot(page, "home-mobile-full.png", true);
 	await page.getByRole("button", { name: "打开菜单" }).click();
 	await page.locator("#mobile-menu").waitFor({ state: "visible" });
+	const menuHeight = await page
+		.locator("#mobile-menu")
+		.evaluate((node) => node.getBoundingClientRect().height);
+	check(menuHeight > 500, `mobile menu fills the viewport (${menuHeight}px)`);
 	await screenshot(page, "menu-mobile.png");
 	await page.keyboard.press("Escape");
 	await page.goto(`${BASE}/posts/xiangtuzhongguo-analysis/`, {
@@ -160,12 +180,43 @@ async function screenshot(page, name, fullPage = false) {
 	await context.close();
 }
 
+// System-level reduced motion, independent of the site preference.
+{
+	const { context, page } = await newPage(
+		{ width: 1440, height: 1000 },
+		true,
+		{ reducedMotion: "reduce" },
+	);
+	await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+	const transition = await page.evaluate(() => {
+		const button = document.querySelector(".button");
+		return button ? getComputedStyle(button).transitionDuration : "missing";
+	});
+	check(
+		parseFloat(transition) < 0.01,
+		`prefers-reduced-motion collapses transitions (${transition})`,
+	);
+	await context.close();
+}
+
 // Tablet home.
 {
 	const { context, page } = await newPage({ width: 768, height: 1024 });
 	await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
 	await assertNoHorizontalOverflow(page, "tablet home");
 	await screenshot(page, "home-tablet.png");
+	await context.close();
+}
+
+// 320px phone and 1920px wide screen.
+for (const [width, height, label] of [
+	[320, 720, "small phone"],
+	[1920, 1080, "wide desktop"],
+]) {
+	const { context, page } = await newPage({ width, height });
+	await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+	check((await page.locator("h1").count()) === 1, `${label} has one h1`);
+	await assertNoHorizontalOverflow(page, label);
 	await context.close();
 }
 
@@ -184,6 +235,57 @@ for (const [name, route, viewport] of [
 	check((await page.locator("h1").count()) === 1, `${route} has one h1`);
 	await assertNoHorizontalOverflow(page, route);
 	await screenshot(page, name);
+	await context.close();
+}
+
+// Project media lightbox.
+{
+	const { context, page } = await newPage({ width: 1440, height: 1000 });
+	await page.goto(`${BASE}/projects/`, { waitUntil: "networkidle" });
+	const media = page.locator(".project-card__media").first();
+	check((await media.count()) === 1, "project media trigger exists");
+	await media.click();
+	await page.locator(".lightbox").waitFor({ state: "visible" });
+	check(
+		(await page.locator(".lightbox__stage img").count()) === 1,
+		"project image opens an accessible lightbox",
+	);
+	await screenshot(page, "lightbox-desktop.png");
+	await page.keyboard.press("Escape");
+	await page.locator(".lightbox").waitFor({ state: "hidden" });
+	await page.waitForTimeout(200);
+	const lightboxFocus = await page.evaluate(() =>
+		document.activeElement?.getAttribute("aria-label"),
+	);
+	check(
+		lightboxFocus?.includes("截图") ?? false,
+		"lightbox returns focus to its trigger",
+	);
+	await context.close();
+}
+
+// Code-copy interaction against a generated frame fixture. The build-time
+// wrapper itself is covered by tests/markdown.test.ts.
+{
+	const { context, page } = await newPage({ width: 1440, height: 1000 });
+	await page.goto(`${BASE}/about/`, { waitUntil: "networkidle" });
+	await page.evaluate(() => {
+		const host = document.querySelector("#main");
+		if (!host) return;
+		host.insertAdjacentHTML(
+			"beforeend",
+			'<div class="code-frame"><div class="code-frame__bar"><span class="code-frame__lang">TEST</span><button type="button" class="code-copy" data-code-copy>复制</button></div><pre><code>const fixture = "copied";</code></pre></div>',
+		);
+	});
+	const copy = page.locator("[data-code-copy]").last();
+	await copy.click();
+	await page.waitForTimeout(80);
+	check(
+		(await copy.innerText()).includes("已复制"),
+		"code copy gives visible feedback",
+	);
+	const copied = await page.evaluate(() => navigator.clipboard.readText());
+	check(copied.includes('const fixture = "copied"'), "code copy writes to clipboard");
 	await context.close();
 }
 
@@ -234,6 +336,10 @@ for (const [name, route, viewport] of [
 	await page.locator(".comments").scrollIntoViewIfNeeded();
 	await page.waitForTimeout(2500);
 	const giscus = await page.locator("iframe.giscus-frame").count();
+	const giscusTerm = await page
+		.locator('script[src*="giscus.app/client.js"]')
+		.getAttribute("data-term");
+	check(giscusTerm === "guestbook/", "Giscus keeps the legacy discussion term");
 	console.log(`INFO giscus iframe count: ${giscus} (external dependency)`);
 	await context.close();
 }
