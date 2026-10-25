@@ -187,9 +187,14 @@ function loadPosts(): LoadedPost[] {
 		let html: string | undefined = rendered.html;
 		let ciphertext: EncryptedPayload | undefined;
 		let headings = rendered.headings;
-		if (fm.encrypted) {
+		if (fm.encrypted && !fm.draft) {
 			const password = requireEnv(fm.passwordEnv!);
 			ciphertext = encryptHtml(rendered.html, password);
+			html = undefined;
+			headings = [];
+		} else if (fm.encrypted) {
+			// Drafts are never rendered or indexed. Do not require their secret
+			// until the draft is explicitly published.
 			html = undefined;
 			headings = [];
 		}
